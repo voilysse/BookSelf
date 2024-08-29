@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 const router = express.Router();
+const auth = require("../middleware/auth");
+
 
 router.post("/register", async (req, res) => {
     try{
@@ -41,7 +43,12 @@ router.post("/login", async (req, res) => {
         if(!isMatch) return res.status(400).json({msg: "Incorrect password"});
         
         const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET);
-        res.json({token, user: {userId: user._id, username: user.username}});
+        
+        res.cookie('access_token', token, {
+            httpOnly: true, 
+        });
+
+        res.json({ user: { userId: user._id, username: user.username } });
     }catch(err){
         res.status(400).json(err);
     }

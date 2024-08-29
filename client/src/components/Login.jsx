@@ -3,7 +3,7 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
 import { login } from '../redux/authSlice';
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 function Login() {
   const [formData, setFormData] = useState({});
@@ -16,7 +16,6 @@ function Login() {
 
   const handleSubmit = async (e) =>{
     e.preventDefault();
-    console.log(formData);  
     try {
       const res = await fetch( '/api/login', {
         method: 'POST',
@@ -35,6 +34,7 @@ function Login() {
 
       }
     }
+
   return (
     <div>
       <div className='min-h-screen mt-20'>
@@ -70,7 +70,7 @@ function Login() {
               onChange={handleChange}
             />
           </div>
-          <button type="submit" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+          <button type="submit" className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
           Sign In
           </button>
         </form>
