@@ -1,5 +1,9 @@
 import React from 'react'
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import Books from '../components/Books';
+import { useSelector, useDispatch } from 'react-redux';
+
 
 const Home = () => {
   const currentUser = useSelector((state) => state.auth.user);
@@ -10,7 +14,9 @@ const Home = () => {
       ) : (
         <h1>Please log in to continue.</h1>
       )}
-    </div>
+
+      <Books />
+      </div>
   )
 }
 
