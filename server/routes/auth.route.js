@@ -42,7 +42,7 @@ router.post('/register', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ msg: "User not found." });
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcryptjs.compare(password, user.password);
     if (!isMatch)  return res.status(400).json({ msg: "Incorrect password." });
     
     jwt.sign({userId: user._id, username: user.username}, process.env.JWT_SECRET, (err, token) => {
@@ -66,3 +66,5 @@ router.post('/register', async (req, res) => {
         });
     });
 });
+
+module.exports = router;

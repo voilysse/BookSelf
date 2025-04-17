@@ -1,7 +1,7 @@
 require('dotenv/config');
 const express = require('express');
 
-const User = require("../models/user.model");
+const User = require("../models/user.model.js");
 const router = express.Router();
 
 
@@ -13,7 +13,7 @@ const passport = require('passport');
 // retrieve all users
 router.get('/', (req, res) => {
   User.find({}, { password: 0, _id: 0})
-    .populate('reviews')
+    //.populate('reviews')
     .then(users => {
       res.status(200).json({
         users,
@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
 // GET (PUBLIC)
 // get info from a single user
 router.get('/:id', (req, res) => {
-  User.findById(req.params.id).populate("reviews")
+  User.findById(req.params.id)//.populate("reviews")
     .then(user => res.status(200).json({ user }))
     .catch(err =>
       res.status(400).json({ msg: 'User does not exist', err })
