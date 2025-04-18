@@ -112,6 +112,18 @@ box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
 .Title{
 display: inline-block;
 }
+
+.Typewriter.Twelve{
+  margin-left: 40px;
+  font-size:20px;
+  letter-spacing: 4px;
+  font-family: monospace;
+  border-right: 3px solid;
+  width: 68%;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 1.5s steps(12), cursor .4s step-end infinite alternate;
+  }
 .Typewriter{
 font-size:20px;
 letter-spacing: 4px;
@@ -182,4 +194,45 @@ justify-content: center;
 align-items: center;
 text-align: center;
 padding: 10px;
+}
+.HeaderContainer{
+  position: absolute;
+  top:0;
+  left:0;
+  width: 100vw;
+  height:100px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+.HeaderLogo{
+  top: 0;
+  left: 0;
+  height: 80px;
+  margin: 12px;
+}
+.HeaderButton{
+  font-size: large;
+  right: 0;
+  justify-self: flex-end;
+  height: 50%;
+  width: 90px;
+  align-self: center;
+  margin-right: 100px;
+}
+.TextLink{
+  background: transparent;
+  margin-right: 10px;
+  width: 50px;
+  height: 10px;
+  cursor: pointer;
+}
+.HeaderActions{
+  align-self: center;
+  height: 100px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
