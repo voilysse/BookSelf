@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./Home.css";
 function Header({ setIsRegisterVisible, setIsLoginVisible }) {
   console.log(typeof setIsLoginVisible);
   return (
