@@ -11,7 +11,7 @@ function Register({ setIsRegisterVisible }) {
     e.preventDefault();
     const { username, email, password } = data;
     try {
-      const { data } = await axios.post("http://localhost:4000/register", {
+      const { data } = await axios.post("http://localhost:4000/api/register", {
         username,
         email,
         password,
@@ -42,15 +42,15 @@ function Register({ setIsRegisterVisible }) {
             <input
               className="Input"
               type="email"
-              value={data.username}
-              onChange={(e) => setData({ ...data, username: e.target.value })}
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
             ></input>
             <h2>Username</h2>
             <input
               className="Input"
               type="text"
-              value={data.email}
-              onChange={(e) => setData({ ...data, email: e.target.value })}
+              value={data.username}
+              onChange={(e) => setData({ ...data, username: e.target.value })}
             ></input>
             <h2>Password</h2>
             <input
@@ -69,7 +69,7 @@ function Register({ setIsRegisterVisible }) {
             <hr className="separator" />
           </div>
           <p className="SmallGrey">
-            Already have an acount? <a className="LinkText">Log in</a>
+            Already have an account? <a className="LinkText">Log in</a>
           </p>
         </div>
       </div>
