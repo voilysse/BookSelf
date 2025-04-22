@@ -1,0 +1,9 @@
+textarea{
+    overflow: hidden;
+}
+textarea:hover{
+    overflow-y: scroll;
+}
+textarea:focus{
+    outline: none;
+}

@@ -24,6 +24,7 @@ const Home = ({
         />
       </header>
       <main>
+        {/*<BookSidebar book={mockBooks[6]} />*/}
         <Carousel
           cards={myCards}
           cardHeight={350}

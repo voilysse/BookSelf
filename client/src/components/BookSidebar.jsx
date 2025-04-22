@@ -1,3 +1,4 @@
+import BookComments from "./BookComments.jsx";
 import "./BookSidebar.css";
 import CommentCard from "./CommentCard";
 import CoverCard from "./CoverCard.jsx";
@@ -9,23 +10,14 @@ function BookSidebar({ book }) {
         <div
           className="CommentsContainer"
           style={{
-            color: "black",
+            width: "100%",
+            height: "100%",
           }}
         >
-          <CommentCard comment={book.comments[0]} />
+          <BookComments book={mockBooks[6]} />
         </div>
-        <div
-          style={{
-            position: "absolute",
-            right: "0",
-            top: "0",
-            margin: "15px",
-          }}
-        ></div>
       </div>
     </>
-    //<CoverCard source={book.coverImage} width={60} height={120} />
-    //<h1>{book.title}</h1>
   );
 }
 export default BookSidebar;
