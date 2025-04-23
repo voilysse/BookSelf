@@ -1,7 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
+import "./Register.css";
+import OrangeButton from "./OrangeButton.jsx";
+import { ReactComponent as Eye } from "./assets/eye-solid.svg";
+import { ReactComponent as EyeSlash } from "./assets/eye-slash-solid.svg";
 
-function Register({ setIsRegisterVisible }) {
+function Register({ setIsRegisterVisible, setIsLoginVisible }) {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const toggle = () => {
+    setIsRegisterVisible(false);
+    setIsLoginVisible(true);
+  };
   const [data, setData] = useState({
     username: "",
     email: "",
@@ -17,22 +26,56 @@ function Register({ setIsRegisterVisible }) {
         password,
       });
     } catch (error) {}
-    console.log("I did something");
   };
   return (
     <>
-      <div className="Register">
+      <div
+        className="RegisterBackground"
+        style={{
+          position: "fixed",
+          top: "0",
+          right: "0",
+          backgroundColor: "rgba(0,0,0,0.8)",
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <div className="Container">
           <div className="CloseButton">
             <button onClick={() => setIsRegisterVisible(false)}>
               <i className="fa-solid fa-xmark"></i>
             </button>
           </div>
-          <img className="Logo" src="/images/logo.png" alt="Bookself Logo" />
-          <div className="Title">
-            <h1 className="Typewriter">Welcome to Bookself</h1>
-            <div className="ParagraphContainer">
-              <p className="SmallGrey" style={{ marginRight: "20px" }}>
+          <div className="Logo">
+            <img src="/images/logo.png" alt="Bookself Logo" />
+          </div>
+          <div
+            className="Title"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <div>
+              <h1 className="Typewriter">Welcome to Bookself</h1>
+            </div>
+            <div
+              className="ParagraphContainer"
+              style={{
+                width: "250px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+                padding: "3px",
+              }}
+            >
+              <p className="SmallGrey">
                 Start exploring the vast world of literature
               </p>
             </div>
@@ -53,23 +96,53 @@ function Register({ setIsRegisterVisible }) {
               onChange={(e) => setData({ ...data, username: e.target.value })}
             ></input>
             <h2>Password</h2>
-            <input
-              className="Input"
-              type="password"
-              value={data.password}
-              onChange={(e) => setData({ ...data, password: e.target.value })}
-            ></input>
+            <div
+              style={{
+                position: "relative",
+                left: "-4px",
+              }}
+            >
+              <input
+                className="Input"
+                type={passwordVisible ? "text" : "password"}
+                value={data.password}
+                onChange={(e) => setData({ ...data, password: e.target.value })}
+              ></input>
+              <button
+                className="eye"
+                style={{
+                  background: "transparent",
+                  width: "18px",
+                  position: "absolute",
+                  right: "2px",
+                  top: "10px",
+                }}
+                onClick={() => {
+                  setPasswordVisible(!passwordVisible);
+                }}
+              >
+                {passwordVisible ? <Eye /> : <EyeSlash />}
+              </button>
+            </div>
           </div>
-          <button className="OrangeButton" onClick={registerUser}>
-            Register
-          </button>
+          <OrangeButton size={15} text="Register" func={registerUser} />
           <div className="textSeparator">
             <hr className="separator" />
             <p>or</p>
             <hr className="separator" />
           </div>
           <p className="SmallGrey">
-            Already have an account? <a className="LinkText">Log in</a>
+            Already have an account?{" "}
+            <button
+              style={{
+                background: "transparent",
+                color: "rgba(0,0,0,1)",
+              }}
+              className="LinkText"
+              onClick={toggle}
+            >
+              Log in
+            </button>
           </p>
         </div>
       </div>

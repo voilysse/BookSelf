@@ -1,5 +1,5 @@
 import "./OrangeButton.css";
-function OrangeButton({ size = 50, text = "butt", func }) {
+function OrangeButton({ size = 50, text = "button", func }) {
   return (
     <button
       onClick={func}
