@@ -1,17 +1,17 @@
-const router = express.Router();
 const express = require("express");
+const router = express.Router();
 const bcryptjs = require("bcryptjs");
 
 const auth = require("../middleware/auth.middleware.js");
 const User = require("../models/user.model.js");
 
-// get single user
+// get single user by id
 router.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    if (!user) {
+    if (!user)
       return res.status(404).json({ msg: "User does not exist.", err });
-    }
+
     res.status(200).json({ user });
   } catch (err) {
     res.status(500).json(err);
@@ -191,6 +191,20 @@ router.get("/:id/blocked", async (req, res) => {
     if (!user) return res.status(404).json({ msg: "User not found." });
 
     res.status(200).json({ blocked: user.block });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// get reviews
+router.get("/:id/reviews", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate(
+      "reviews"
+    );
+    if (!user) return res.status(404).json({ msg: "User not found." });
+
+    res.status(200).json({ reviews: user.reviews });
   } catch (err) {
     res.status(500).json(err);
   }

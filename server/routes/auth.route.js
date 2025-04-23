@@ -1,11 +1,9 @@
-const router = express.Router();
 const express = require("express");
+const router = express.Router();
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user.model");
-
-// Authentication routes
 
 // register
 router.post("/register", async (req, res) => {
@@ -72,6 +70,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
+//logout
 router.post("/logout", (req, res) => {
   res.clearCookie("access_token");
   res.json({ success: true, msg: "Logged out." });
