@@ -4,9 +4,11 @@ import "./Register.css";
 import OrangeButton from "./OrangeButton.jsx";
 import { ReactComponent as Eye } from "./assets/eye-solid.svg";
 import { ReactComponent as EyeSlash } from "./assets/eye-slash-solid.svg";
-
+import { useAuthStore } from "../store/authStore.js";
+import { useNavigate } from "react-router-dom";
 function Register({ setIsRegisterVisible, setIsLoginVisible }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const navigate = useNavigate();
   const toggle = () => {
     setIsRegisterVisible(false);
     setIsLoginVisible(true);
@@ -16,6 +18,8 @@ function Register({ setIsRegisterVisible, setIsLoginVisible }) {
     email: "",
     password: "",
   });
+  const { signup, isLoading, error, user } = useAuthStore();
+  console.log(user);
   const registerUser = async (e) => {
     e.preventDefault();
     const { username, email, password } = data;
@@ -25,6 +29,8 @@ function Register({ setIsRegisterVisible, setIsLoginVisible }) {
         email,
         password,
       });
+      await signup(email, password, username);
+      navigate("/verify-email");
     } catch (error) {}
   };
   return (
@@ -125,7 +131,11 @@ function Register({ setIsRegisterVisible, setIsLoginVisible }) {
               </button>
             </div>
           </div>
-          <OrangeButton size={15} text="Register" func={registerUser} />
+          <OrangeButton
+            size={15}
+            text={isLoading ? "Loading..." : "Register"}
+            func={registerUser}
+          />
           <div className="textSeparator">
             <hr className="separator" />
             <p>or</p>

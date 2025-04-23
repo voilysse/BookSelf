@@ -3,6 +3,7 @@ import "./Home.css";
 import "./Header.css";
 
 import OrangeButton from "./OrangeButton";
+import SearchBar from "./SearchBar";
 function Header({ setIsRegisterVisible, setIsLoginVisible }) {
   console.log(typeof setIsLoginVisible);
   return (
@@ -12,6 +13,7 @@ function Header({ setIsRegisterVisible, setIsLoginVisible }) {
         style={{
           width: "100%",
           height: "100px",
+          alignItems: "center",
         }}
       >
         <img
@@ -19,6 +21,7 @@ function Header({ setIsRegisterVisible, setIsLoginVisible }) {
           src="images/logo.png"
           alt="Bookself Logo"
         ></img>
+        <SearchBar width="200px" fontSize="16" />
         <div class="HeaderActions">
           <button
             className="LogIn"
