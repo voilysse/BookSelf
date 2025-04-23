@@ -7,16 +7,16 @@ export const useAuthStore= create((set)=>({
     isAuthenticated: false,
     isCheckingAuth: true,
 
-    signup: async (email, password, name)=>{
+    signup: async (email, username, password)=>{
         set({isLoading:true, error: null});
         try{
             const response = await fetch("http://localhost:4000/api/register",{
                 method: 'POST',
-                header: {
-                    'Content-Type': 'aplication/json',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({email, password, name}),
+                body: JSON.stringify({email, username, password}),
             })
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {

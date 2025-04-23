@@ -14,24 +14,22 @@ function Register({ setIsRegisterVisible, setIsLoginVisible }) {
     setIsLoginVisible(true);
   };
   const [data, setData] = useState({
-    username: "",
     email: "",
+    username: "",
     password: "",
   });
   const { signup, isLoading, error, user } = useAuthStore();
   console.log(user);
   const registerUser = async (e) => {
     e.preventDefault();
-    const { username, email, password } = data;
+    const { email, username, password } = data;
     try {
-      const { data } = await axios.post("http://localhost:4000/api/register", {
-        username,
-        email,
-        password,
-      });
-      await signup(email, password, username);
+      await signup(email, username, password);
+      
       navigate("/verify-email");
-    } catch (error) {}
+    }  catch (err) {
+      console.log(":(");
+    }
   };
   return (
     <>
