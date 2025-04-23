@@ -9,6 +9,12 @@ const authorSchema = new Schema({
     biography: {
         type: String,
     },
+    birthDate: { 
+        type: Date, 
+    },
+    deathDate: { 
+        type: Date, 
+    },
     books: [{
         type: Schema.Types.ObjectId,
         ref: 'Book'

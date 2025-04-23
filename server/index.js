@@ -7,6 +7,9 @@ dotenv.config();
 
 var authRouter = require("./routes/auth.route.js");
 var userRouter = require("./routes/user.route.js");
+var bookRouter = require("./routes/book.route.js");
+var authorRouter = require("./routes/author.route.js");
+var reviewRouter = require("./routes/review.route.js");
 
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -33,6 +36,9 @@ mongodb();
 
 app.use("/api/", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/books", bookRouter);
+app.use("/api/authors", authorRouter);
+app.use("/api/reviews", reviewRouter);
 
 app.get("/", function (req, res) {
   res.send(`Node and express server running on port ${PORT}`);
