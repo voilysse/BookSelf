@@ -5,6 +5,16 @@ const bcryptjs = require("bcryptjs");
 const auth = require("../middleware/auth.middleware.js");
 const User = require("../models/user.model.js");
 
+// get all users
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find({}, { password: 0, _id: 0 });
+    res.status(200).json({ users });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 // get single user by id
 router.get("/:id", async (req, res) => {
   try {
@@ -13,16 +23,6 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ msg: "User does not exist.", err });
 
     res.status(200).json({ user });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-// get all users
-router.get("/", async (req, res) => {
-  try {
-    const users = await User.find({}, { password: 0, _id: 0 });
-    res.status(200).json({ users });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -116,7 +116,8 @@ router.get("/:id/following", async (req, res) => {
       "following",
       "username"
     );
-    if (!user) return res.status(404).json({ msg: "User not found." });
+    if (!user) 
+      return res.status(404).json({ msg: "User not found." });
 
     res.status(200).json({ following: user.following });
   } catch (err) {
@@ -131,7 +132,8 @@ router.get("/:id/followers", async (req, res) => {
       "followers",
       "username"
     );
-    if (!user) return res.status(404).json({ msg: "User not found." });
+    if (!user) 
+      return res.status(404).json({ msg: "User not found." });
 
     res.status(200).json({ followers: user.followers });
   } catch (err) {
@@ -188,7 +190,8 @@ router.get("/:id/blocked", async (req, res) => {
       "block",
       "username"
     );
-    if (!user) return res.status(404).json({ msg: "User not found." });
+    if (!user) 
+      return res.status(404).json({ msg: "User not found." });
 
     res.status(200).json({ blocked: user.block });
   } catch (err) {
@@ -202,7 +205,8 @@ router.get("/:id/reviews", async (req, res) => {
     const user = await User.findById(req.params.id).populate(
       "reviews"
     );
-    if (!user) return res.status(404).json({ msg: "User not found." });
+    if (!user) 
+      return res.status(404).json({ msg: "User not found." });
 
     res.status(200).json({ reviews: user.reviews });
   } catch (err) {
