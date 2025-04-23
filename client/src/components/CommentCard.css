@@ -1,0 +1,10 @@
+.Thumb{
+    fill: rgba(0,0,0,0.1)
+}
+.Thumb:hover{
+    fill: rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+.overflowing .CardContainer {
+    width: 100%; /* When container overflows, card will stretch to full width */
+  }

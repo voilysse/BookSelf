@@ -6,9 +6,9 @@ const bookSchema = new Schema({
         type: String,
         required: true
     },
-    author: {
+    author: [{
         type: String
-    },
+    }],
     summary: {
         type: String
     },
@@ -17,10 +17,10 @@ const bookSchema = new Schema({
     },
     ISBN: {
         type: String,
+        unique: true
     },
     genre: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Genre'
+        type: String
     }],
     reviews: [{
         type: Schema.Types.ObjectId,

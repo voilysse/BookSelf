@@ -1,25 +1,35 @@
-import logo from '../logo.svg';
-
-const Home = () => {
+import Resct, { useState } from "react";
+import Register from "./Register";
+import Header from "./Header";
+import Login from "./Login";
+import { mockBooks } from "./mockBooks.jsx";
+import BookCard from "./BookCard.jsx";
+import Carousel from "./Carousel.jsx";
+import BookSidebar from "./BookSidebar.jsx";
+import Main from "./Main.jsx";
+const Home = ({
+  isLoginVisible,
+  setIsLoginVisible,
+  isRegisterVisible,
+  setIsRegisterVisible,
+}) => {
+  const myCards = mockBooks.map((b, index) => (
+    <BookCard key={index} book={b} />
+  ));
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          omg hi <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header
+        setIsRegisterVisible={setIsRegisterVisible}
+        setIsLoginVisible={setIsLoginVisible}
+      />
+      <Main
+        setIsLoginVisible={setIsLoginVisible}
+        setIsRegisterVisible={setIsRegisterVisible}
+        isLoginVisible={isLoginVisible}
+        isRegisterVisible={isRegisterVisible}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default Home
-
+export default Home;

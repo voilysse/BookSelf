@@ -12,7 +12,7 @@ const reviewSchema = new Schema({
         ref: 'User',
         required: true
     },
-    comment:{
+    text:{
         type: String,
     },
     rating:{
@@ -22,6 +22,10 @@ const reviewSchema = new Schema({
             validator: (value) => value >= 0 && value <= 5
           },
     },
+    likes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     created: {
         type: Date,
         default: Date.now,
