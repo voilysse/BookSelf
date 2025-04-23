@@ -11,8 +11,10 @@ var userRouter = require('./routes/user.route.js');
 const PORT = process.env.PORT || 4000;
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: true,
+  credentials: true
+}));app.use(express.json());
 app.use(cookieParser());
 
 //const uri = process.env.MONGO_URI;
@@ -29,12 +31,12 @@ connection.once('open', () => {
     console.log("MongoDB database connection established successfully");
 })
 */
-const connectToMongo = async () => {
+const mongodb = async () => {
   await mongoose.connect(uri);
   console.log("MongoDB database connection established successfully");
 };
 
-connectToMongo();
+mongodb();
 
 
 app.use("/api/", authRouter);
