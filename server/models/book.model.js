@@ -7,7 +7,8 @@ const bookSchema = new Schema({
         required: true
     },
     author: [{
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'Author'
     }],
     summary: {
         type: String
@@ -21,10 +22,6 @@ const bookSchema = new Schema({
     },
     genre: [{
         type: String
-    }],
-    reviews: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Review'
     }]
 })
 

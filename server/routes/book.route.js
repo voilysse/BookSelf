@@ -1,46 +1,50 @@
 const express = require("express");
 const router = express.Router();
 
-const auth = require("../middleware/auth.middleware.js");
 const Book = require("../models/book.model.js");
-
-// get single book by id
-router.get("/:id", async (req, res) => {
-  try {
-    const book = await Book.findById(req.params.id).populate("reviews");
-
-    if (!book) return res.status(404).json({ msg: "Book not found." });
-
-    res.json(book);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
+const Author = require("../models/author.model.js");
 
 // get all books
 router.get("/", async (req, res) => {
   try {
-    const books = await Book.find().populate("reviews");
+    const books = await Book.find().populate("author", "name");
     res.status(200).json({ books });
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-// create book
-router.post("/create", auth, async (req, res) => {
-  const { title, author, summary, cover, ISBN, genre } = req.body;
+// get single book by id
+router.get("/:id", async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id).populate("author", "name");
 
+    if (!book) return res.status(404).json({ msg: "Book not found." });
+
+    res.status(200).json({ book });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// create book
+router.post("/create", async (req, res) => {
   try {
     const newBook = await Book.create({
-      title,
-      author,
-      summary,
-      cover,
-      ISBN,
-      genre,
+      title: req.body.title,
+      summary: req.body.summary,
+      cover: req.body.cover,
+      ISBN: req.body.ISBN,
+      genre: req.body.genre,
     });
     const book = await newBook.save();
+
+    await book.updateOne({ $push: { author: req.body.authorId } });
+
+    await Author.updateMany(
+      { _id: { $in: req.body.authorId } },
+      { $push: { books: book._id } }
+    );
 
     res.status(201).json({ book });
   } catch (err) {
@@ -49,7 +53,7 @@ router.post("/create", auth, async (req, res) => {
 });
 
 // update book
-router.put("/:id/update", auth, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const book = await Book.findByIdAndUpdate(
       req.params.id,
@@ -66,7 +70,7 @@ router.put("/:id/update", auth, async (req, res) => {
 });
 
 // delete book
-router.delete("/:id/delete", auth, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const deletedBook = await Book.findByIdAndDelete(req.params.id);
 
@@ -77,5 +81,18 @@ router.delete("/:id/delete", auth, async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+// get authors
+router.get("/:id/authors", async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id).populate("author", "name");
+    if (!book) return res.status(404).json({ msg: "Book not found." });
+
+    res.status(200).json({ author: book.author });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 
 module.exports = router;

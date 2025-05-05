@@ -10,6 +10,9 @@ var userRouter = require("./routes/user.route.js");
 var bookRouter = require("./routes/book.route.js");
 var authorRouter = require("./routes/author.route.js");
 var reviewRouter = require("./routes/review.route.js");
+var groupRouter = require("./routes/group.route.js");
+var shelfRouter = require("./routes/shelf.route.js");
+var forumRouter = require("./routes/forum.route.js");
 
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -39,6 +42,9 @@ app.use("/api/users", userRouter);
 app.use("/api/books", bookRouter);
 app.use("/api/authors", authorRouter);
 app.use("/api/reviews", reviewRouter);
+app.use("/api/groups", groupRouter);
+app.use("/api/shelves", shelfRouter);
+app.use("/api/forum", forumRouter);
 
 app.get("/", function (req, res) {
   res.send(`Node and express server running on port ${PORT}`);

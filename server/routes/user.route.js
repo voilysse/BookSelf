@@ -8,7 +8,7 @@ const User = require("../models/user.model.js");
 // get all users
 router.get("/", async (req, res) => {
   try {
-    const users = await User.find({}, { password: 0, _id: 0 });
+    const users = await User.find({}, { password: 0, _id: 0 }).populate("shelves", "name");
     res.status(200).json({ users });
   } catch (err) {
     res.status(500).json(err);
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 // get single user by id
 router.get("/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate("shelves", "name");
     if (!user)
       return res.status(404).json({ msg: "User does not exist.", err });
 
@@ -29,7 +29,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // update user
-router.post("/update", auth, async (req, res) => {
+router.put("/", auth, async (req, res) => {
   try {
     if (req.body.password) {
       const salt = await bcryptjs.genSalt(10);
@@ -55,7 +55,7 @@ router.post("/update", auth, async (req, res) => {
 });
 
 // delete user
-router.delete("/delete", auth, async (req, res) => {
+router.delete("/", auth, async (req, res) => {
   try {
     await User.findByIdAndDelete(req.user.userId);
     res.json({ msg: "User deleted." });
@@ -194,21 +194,6 @@ router.get("/:id/blocked", async (req, res) => {
       return res.status(404).json({ msg: "User not found." });
 
     res.status(200).json({ blocked: user.block });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-// get reviews
-router.get("/:id/reviews", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id).populate(
-      "reviews"
-    );
-    if (!user) 
-      return res.status(404).json({ msg: "User not found." });
-
-    res.status(200).json({ reviews: user.reviews });
   } catch (err) {
     res.status(500).json(err);
   }

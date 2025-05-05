@@ -22,21 +22,9 @@ const userSchema = new Schema({
     biography: {
         type: String
     },
-    books_read: [{
+    shelves: [{
         type: Schema.Types.ObjectId,
-        ref: 'Book'
-    }],
-    books_curr: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Book'
-    }],
-    books_tbr: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Book'
-    }],
-    reviews: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Review'
+        ref: 'Shelf'
     }],
     created: {
         type: Date,

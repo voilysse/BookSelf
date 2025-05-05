@@ -4,6 +4,7 @@ const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user.model");
+const Shelf = require("../models/shelf.model.js");
 
 // register
 router.post("/register", async (req, res) => {
@@ -22,6 +23,16 @@ router.post("/register", async (req, res) => {
       email,
       password: hash,
     });
+
+    // Create default shelves
+    const defaultShelfNames = ["Read", "Currently Reading", "Want to Read"];
+    const shelfPromises = defaultShelfNames.map((name) =>
+      new Shelf({ name, user: newUser._id, default: true }).save()
+    );
+    const createdShelves = await Promise.all(shelfPromises);
+
+    // Add shelves to user
+    newUser.shelves = createdShelves.map((shelf) => shelf._id);
     const user = await newUser.save();
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
