@@ -1,6 +1,7 @@
 import Home from './components/Home';
 import Login from './components/Login.jsx';
 import Register from './components/Register';
+import Profile from './components/Profile';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {useEffect, useState} from 'react';
 function App() {
@@ -13,6 +14,7 @@ function App() {
          isRegisterVisible={isRegisterVisible} setIsRegisterVisible={setIsRegisterVisible}/>} />
          <Route path="/login" element={<Login/>}/>
          <Route path="/register" element={<Register/>}/>
+         <Route path='/profile' element={<Profile/>} />
         </Routes>
     </BrowserRouter>
   );
