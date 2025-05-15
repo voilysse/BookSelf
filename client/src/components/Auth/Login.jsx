@@ -20,6 +20,7 @@ function Login() {
 
   useEffect(() => {
     if (user) {
+      toast.success("Logged in :)");
       navigate('/profile')
     }
   }, [navigate, user])
@@ -37,7 +38,7 @@ function Login() {
       toast.error("Please enter valid email address.");
       return;
     }
-    
+
     dispatch(loginUser(data));
   };
 

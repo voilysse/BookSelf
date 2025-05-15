@@ -20,7 +20,6 @@ function Register() {
 
   useEffect(() => {
     if (user) {
-      toast.success("Logged in :)");
       navigate('/profile')
     }
     if (success) {
