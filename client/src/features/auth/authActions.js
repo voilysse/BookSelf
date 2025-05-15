@@ -11,6 +11,7 @@ export const registerUser = createAsyncThunk(
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       };
       await axios.post(
         `${url}/api/register`,
@@ -31,13 +32,13 @@ export const loginUser = createAsyncThunk(
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       };
       const { data } = await axios.post(
         `${url}/api/login`,
         { email, password },
         config
       );
-      localStorage.setItem("token", data.token);
       return data;
     } catch (error) {
       return error;

@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { ReactComponent as ThumbsUp } from "./assets/thumbs-up-solid.svg";
-import { ReactComponent as ThumbsDown } from "./assets/thumbs-down-solid.svg";
+import { ReactComponent as ThumbsUp } from "../assets/thumbs-up-solid.svg";
+import { ReactComponent as ThumbsDown } from "../assets/thumbs-down-solid.svg";
 import "./CommentCard.css";
+import { Link } from "react-router";
+
 function CommentCard({ comment, showReplies = true }) {
   const imgWidth = 40;
   const n = new Date();
   const [now, setNow] = useState(n);
-  const posted = new Date(comment.date);
+  const posted = new Date(comment.created);
   var secondsAgo = Math.floor((now - posted) / 1000);
-  console.log(secondsAgo);
   const timeSince = () => {
     const intervals = [
       { label: "year", seconds: 31536000 },
@@ -90,7 +91,9 @@ function CommentCard({ comment, showReplies = true }) {
             fontWeight: 600,
           }}
         >
-          <bold>@{comment.username}</bold>
+         <bold><Link to={`/users/${comment.user._id}`}> @{comment.user.username}</Link></bold>
+
+         
           <bold
             style={{
               marginLeft: "10px",
@@ -109,7 +112,7 @@ function CommentCard({ comment, showReplies = true }) {
               fontSize: "15px",
             }}
           >
-            {comment.content}
+            {comment.text}
           </p>
         </div>
         <div className="InfoTag" style={{ display: "flex" }}>

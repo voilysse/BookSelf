@@ -1,8 +1,8 @@
 import BookComments from "./BookComments.jsx";
 import "./BookSidebar.css";
-import CommentCard from "./CommentCard";
+import CommentCard from "./CommentCard.jsx";
 import CoverCard from "./CoverCard.jsx";
-import { mockBooks } from "./mockBooks.jsx";
+import { mockBooks } from "../mockBooks.jsx";
 function BookSidebar({ book }) {
   return (
     <>

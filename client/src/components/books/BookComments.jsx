@@ -1,15 +1,23 @@
-import mockComments from "./mockComments.js";
-import { ReactComponent as BoldIcon } from "./assets/bold-solid.svg";
-import { ReactComponent as ItalicIcon } from "./assets/italic-solid.svg";
-import { ReactComponent as UnderlineIcon } from "./assets/underline-solid.svg";
+import mockComments from "../mockComments.js";
+import { ReactComponent as BoldIcon } from "../assets/bold-solid.svg";
+import { ReactComponent as ItalicIcon } from "../assets/italic-solid.svg";
+import { ReactComponent as UnderlineIcon } from "../assets/underline-solid.svg";
 import "./BookComments.css";
 import { useRef } from "react";
-import CommentCard from "./CommentCard";
-import OrangeLabel from "./OrangeLabel.jsx";
-import OrangeButton from "./OrangeButton.jsx";
-function BookComments({ book, inputVisible, titleVisible = true }) {
-  const commentsNum = mockComments.length;
+import CommentCard from "./CommentCard.jsx";
+import OrangeLabel from "../OrangeLabel.jsx";
+import OrangeButton from "../OrangeButton.jsx";
+import { useGetBookReviewsQuery } from "../../features/bookApi";
+
+
+function BookComments({ book, titleVisible = true }) {
+const { data, isLoading } = useGetBookReviewsQuery(book);
+  
+    if (isLoading) return <div>Loading...</div>;
+
+  const commentsNum = data.reviews.length;
   const inputHeight = 65;
+  /*
   const textareaRef = useRef(null);
   const handleClick = () => {
     const el = textareaRef.current;
@@ -17,6 +25,7 @@ function BookComments({ book, inputVisible, titleVisible = true }) {
       el.selectionStart = el.selectionEnd = el.value.length;
     }
   };
+  */
   return (
     <div
       className="CommentsContainer"
@@ -144,7 +153,7 @@ function BookComments({ book, inputVisible, titleVisible = true }) {
           alignItems: "stretch",
         }}
       >
-        {mockComments.map((com, index) => (
+        {data.reviews.map((com, index) => (
           <CommentCard key={index} comment={com} />
         ))}
       </div>

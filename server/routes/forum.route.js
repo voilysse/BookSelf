@@ -9,7 +9,7 @@ const Post = require("../models/post.model.js");
 router.get("/threads", async (req, res) => {
   try {
     const threads = await Thread.find()
-      .populate("user", "username")
+      .populate("user")
       .sort({ created: -1 });
 
     res.status(200).json({ threads });
@@ -22,7 +22,7 @@ router.get("/threads", async (req, res) => {
 router.get("/threads/user/:userId", async (req, res) => {
   try {
     const threads = await Thread.find({ user: req.params.userId })
-      .populate("user", "username")
+      .populate("user")
       .sort({ created: -1 });
 
     res.status(200).json({ threads });
@@ -31,20 +31,24 @@ router.get("/threads/user/:userId", async (req, res) => {
   }
 });
 
-//get single thread
+//get single thread and posts
 router.get("/threads/:id", async (req, res) => {
   try {
     const thread = await Thread.findById(req.params.id).populate(
-      "user",
-      "username"
+      "user"
     );
     if (!thread) return res.status(404).json({ msg: "Thread not found.", err });
 
-    res.status(200).json({ thread });
+    const posts = await Post.find({ thread: req.params.id })
+      .populate("user")
+      .sort({ created: -1 });
+    
+    res.status(200).json({ thread, posts: posts });
   } catch (err) {
     res.status(500).json(err);
   }
 });
+
 
 // create a thread
 router.post("/threads", auth, async (req, res) => {
@@ -144,7 +148,7 @@ router.post("/threads/:id/unlike", auth, async (req, res) => {
 router.get("/threads/:id/posts", async (req, res) => {
   try {
     const posts = await Post.find({ thread: req.params.id })
-      .populate("user", "username")
+      .populate("user")
       .sort({ created: -1 });
 
     if (!posts) return res.status(404).json({ message: "Thread not found." });
@@ -159,7 +163,7 @@ router.get("/threads/:id/posts", async (req, res) => {
 router.get("/user/:id/posts", async (req, res) => {
     try {
       const posts = await Post.find({ user: req.params.id })
-        .populate("user", "username")
+        .populate("user")
         .sort({ created: -1 });
   
       if (!posts) return res.status(404).json({ message: "User not found." });

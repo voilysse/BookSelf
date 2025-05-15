@@ -1,70 +1,49 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../features/auth/authActions.js";
-import OrangeButton from "./OrangeButton.jsx";
-import { ReactComponent as Eye } from "./assets/eye-solid.svg";
-import { ReactComponent as EyeSlash } from "./assets/eye-slash-solid.svg";
+import { Link } from "react-router-dom";
+import { registerUser } from "../../features/auth/authActions.js";
+import "./Register.css";
+import { ReactComponent as Eye } from "../assets/eye-solid.svg";
+import { ReactComponent as EyeSlash } from "../assets/eye-slash-solid.svg";
+import { PrimaryButton } from "../Button/Button.jsx";
 
-function Login({ setIsLoginVisible }) {
+
+function Register({ isOpen, onClose, switchModal }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const { user } = useSelector((state) => state.auth);
+  const { user, success } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm();
 
   useEffect(() => {
     if (user) {
-      console.log("omg it works/");
-      navigate("/profile");
+      navigate('/profile')
     }
-  }, [navigate, user]);
+    if (success) {
+      navigate('/login')
+
+    }
+}, [user, navigate, success]);
 
   const onSubmit = (data) => {
-    console.log(data)
-    dispatch(loginUser(data));
-    console.log(user)
-    navigate("/profile");
+    dispatch(registerUser(data));
   };
+
   return (
-    <>
       <div
-        className="LoginBackground"
-        style={{
-          position: "fixed",
-          top: "0",
-          right: "0",
-          backgroundColor: "rgba(0,0,0,0.8)",
-          height: "100%",
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        className="background"
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="Container">
-            <div className="CloseButton">
-              <button onClick={() => setIsLoginVisible(false)}>
-                <i className="fa-solid fa-xmark"></i>
-              </button>
+        <form onSubmit={handleSubmit(onSubmit)} className="form-container">
+
+            
+            <div className="form-title">
+              <div className="Logo">
+              <img src="/images/logo.png" alt="Bookself Logo" />
             </div>
-            <img className="Logo" src="/images/logo.png" alt="Bookself Logo" />
-            <div
-              className="Title"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "5px",
-              }}
-            >
-              <div>
-                <h1 className="Typewriter Twelve">Welcome back</h1>
-              </div>
+                <h1 className="Typewriter">Welcome to Bookself</h1>
               <div
                 className="ParagraphContainer"
                 style={{
@@ -77,16 +56,23 @@ function Login({ setIsLoginVisible }) {
                 }}
               >
                 <p className="SmallGrey">
-                  Continue exploring the vast world of literature
+                  Start exploring the vast world of literature
                 </p>
               </div>
             </div>
-            <div className="Form">
+            <div className="form-inputs">
               <label htmlFor="email">Email</label>
               <input
                 type="email"
                 className="Input"
                 {...register("email")}
+                required
+              />
+              <label htmlFor="username">Username</label>
+              <input
+                type="text"
+                className="Input"
+                {...register("username")}
                 required
               />
               <label htmlFor="password">Password</label>
@@ -119,16 +105,19 @@ function Login({ setIsLoginVisible }) {
                 </button>
               </div>
             </div>
-            <OrangeButton size={15} text="Log In" type="submit" />
+            <PrimaryButton text="Register" type="submit" />
             <div className="textSeparator">
               <hr className="separator" />
+              <p>or</p>
+              <hr className="separator" />
             </div>
-            <p className="SmallGrey">Forgot your password?</p>
-          </div>
+            <p className="SmallGrey">
+              Already have an account?{" "}
+              <Link to="/login"> Login</Link>
+            </p>
         </form>
-      </div>
-    </>
-  );
+      </div>  
+      );
 }
 
-export default Login;
+export default Register;

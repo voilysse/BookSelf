@@ -7,7 +7,7 @@ const Author = require("../models/author.model.js");
 // get all books
 router.get("/", async (req, res) => {
   try {
-    const books = await Book.find().populate("author", "name");
+    const books = await Book.find().populate("author");
     res.status(200).json({ books });
   } catch (err) {
     res.status(500).json(err);
@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 // get single book by id
 router.get("/:id", async (req, res) => {
   try {
-    const book = await Book.findById(req.params.id).populate("author", "name");
+    const book = await Book.findById(req.params.id).populate("author");
 
     if (!book) return res.status(404).json({ msg: "Book not found." });
 

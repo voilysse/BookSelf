@@ -1,9 +1,8 @@
 import "./StarRating.css";
-import { ReactComponent as MyIcon } from "./assets/star-solid.svg";
+import { ReactComponent as MyIcon } from "../assets/star-solid.svg";
 function StarRating({ rating, size }) {
   const w = size;
   const r = rating;
-  console.log(rating);
   return (
     <>
       <div className="Stars" style={{ width: `${w}px` }}>

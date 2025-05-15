@@ -9,10 +9,23 @@ const Reply = require("../models/reply.model.js");
 router.get("/book/:bookId", async (req, res) => {
   try {
     const reviews = await Review.find({ book: req.params.bookId })
-      .populate("user", "username")
+      .populate("user")
       .sort({ created: -1 });
 
-    res.status(200).json({ reviews });
+    const reviewsWithReplies = await Promise.all(
+      reviews.map(async (review) => {
+        const replies = await Reply.find({ review: review._id })
+          .populate("user")
+          .sort({ created: -1 });
+
+        return {
+          ...review.toObject(),
+          replies, 
+        };
+      })
+    );
+
+    res.status(200).json({ reviews: reviewsWithReplies });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -35,8 +48,7 @@ router.get("/user/:userId", async (req, res) => {
 router.get("/:reviewId", async (req, res) => {
   try {
     const review = await Review.findById(req.params.reviewId).populate(
-      "user",
-      "username"
+      "user"
     );
     if (!review) return res.status(404).json({ msg: "Review not found.", err });
 
@@ -147,8 +159,9 @@ router.post("/:id/unlike", auth, async (req, res) => {
 // get all replies for review
 router.get("/:id/replies", async (req, res) => {
   try {
+    const review = await Review.findById(req.params.id);
     const replies = await Reply.find({ review: req.params.id })
-      .populate("user", "username")
+      .populate("user")
       .sort({ created: -1 });
 
     if (!review) return res.status(404).json({ message: "Review not found." });

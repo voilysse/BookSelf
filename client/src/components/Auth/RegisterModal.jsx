@@ -1,67 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../features/auth/authActions.js";
+import ReactDOM from "react-dom";
+import { registerUser } from "../../features/auth/authActions.js";
 import "./Register.css";
-import OrangeButton from "./OrangeButton.jsx";
-import { ReactComponent as Eye } from "./assets/eye-solid.svg";
-import { ReactComponent as EyeSlash } from "./assets/eye-slash-solid.svg";
+import { ReactComponent as Eye } from "../assets/eye-solid.svg";
+import { ReactComponent as EyeSlash } from "../assets/eye-slash-solid.svg";
+import { PrimaryButton } from "../Button/Button.jsx";
 
-function Register({ setIsRegisterVisible, setIsLoginVisible }) {
+
+function Register({ isOpen, onClose, switchModal }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const toggle = () => {
-    setIsRegisterVisible(false);
-    setIsLoginVisible(true);
-  };
 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { register, handleSubmit } = useForm();
+
+  useEffect(() => {
+    if (user) {
+      onClose();
+      navigate('/profile')
+    }
+}, [user, onClose, navigate, switchModal]);
 
   const onSubmit = (data) => {
     dispatch(registerUser(data));
-    toggle()
   };
+  if (!isOpen) return null;
 
-  return (
-    <>
+  return ReactDOM.createPortal(
       <div
-        className="RegisterBackground"
-        style={{
-          position: "fixed",
-          top: "0",
-          right: "0",
-          backgroundColor: "rgba(0,0,0,0.8)",
-          height: "100%",
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        className="background"
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="Container">
+        <form onSubmit={handleSubmit(onSubmit)} className="form-container">
             <div className="CloseButton">
-              <button onClick={() => setIsRegisterVisible(false)}>
+              <button type="button" onClick={onClose}>
                 <i className="fa-solid fa-xmark"></i>
               </button>
             </div>
-            <div className="Logo">
+            
+            <div className="form-title">
+              <div className="Logo">
               <img src="/images/logo.png" alt="Bookself Logo" />
             </div>
-            <div
-              className="Title"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "5px",
-              }}
-            >
-              <div>
                 <h1 className="Typewriter">Welcome to Bookself</h1>
-              </div>
               <div
                 className="ParagraphContainer"
                 style={{
@@ -78,7 +62,7 @@ function Register({ setIsRegisterVisible, setIsLoginVisible }) {
                 </p>
               </div>
             </div>
-            <div className="Form">
+            <div className="form-inputs">
               <label htmlFor="email">Email</label>
               <input
                 type="email"
@@ -123,7 +107,7 @@ function Register({ setIsRegisterVisible, setIsLoginVisible }) {
                 </button>
               </div>
             </div>
-            <OrangeButton size={15} text="Register" type="submit" />
+            <PrimaryButton text="Register" type="submit" />
             <div className="textSeparator">
               <hr className="separator" />
               <p>or</p>
@@ -137,15 +121,14 @@ function Register({ setIsRegisterVisible, setIsLoginVisible }) {
                   color: "rgba(0,0,0,1)",
                 }}
                 className="LinkText"
-                onClick={toggle}
+                onClick={switchModal}
               >
                 Log in
               </button>
             </p>
-          </div>
         </form>
-      </div>
-    </>
+      </div>,
+    document.getElementById("modal-root")
   );
 }
 

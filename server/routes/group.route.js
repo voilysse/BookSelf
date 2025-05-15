@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
   try {
     const groups = await Group.find()
       .populate("members", "username")
-      .populate("creator", "username");
+      .populate("creator");
     res.status(200).json({ groups });
   } catch (err) {
     res.status(500).json(err);
@@ -21,7 +21,7 @@ router.get("/:id", async (req, res) => {
   try {
     const group = await Group.findById(req.params.id)
       .populate("members", "username")
-      .populate("creator", "username");
+      .populate("creator");
 
     if (!group) return res.status(404).json({ msg: "Group not found." });
 

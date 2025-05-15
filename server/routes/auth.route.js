@@ -76,7 +76,7 @@ router.post("/login", async (req, res) => {
     });
     res
       .status(200)
-      .json({ user: { userId: user._id, username: user.username } });
+      .json({ user: { userId: user._id, username: user.username }, token });
   } catch (err) {
     res.status(500).json({ msg: "Error signing token.", err });
   }
@@ -89,9 +89,11 @@ router.post("/logout", (req, res) => {
 });
 
 //get curr user
-router.get("/profile", auth, async (req, res)=>{
-try {
-    const user = await User.findById(req.user.userId).populate("shelves", "name");
+router.get("/profile", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).populate(
+      "shelves"
+    );
     if (!user)
       return res.status(404).json({ msg: "User does not exist.", err });
 
@@ -99,5 +101,5 @@ try {
   } catch (err) {
     res.status(500).json(err);
   }
-})
+});
 module.exports = router;

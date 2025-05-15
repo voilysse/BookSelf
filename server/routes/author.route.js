@@ -6,7 +6,7 @@ const Author = require("../models/author.model.js");
 // get all authors
 router.get("/", async (req, res) => {
   try {
-    const authors = await Author.find().populate("books", "title");
+    const authors = await Author.find().populate("books");
     res.status(200).json({ authors });
   } catch (err) {
     res.status(500).json(err);
@@ -17,9 +17,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const author = await Author.findById(req.params.id).populate(
-      "books",
-      "title"
-    );
+      "books"    );
 
     if (!author) return res.status(404).json({ msg: "Author not found." });
 
@@ -82,9 +80,7 @@ router.delete("/:id", async (req, res) => {
 router.get("/:id/books", async (req, res) => {
   try {
     const author = await Author.findById(req.params.id).populate(
-      "books",
-      "title"
-    );
+      "books");
     if (!author) return res.status(404).json({ msg: "Author not found." });
 
     res.status(200).json({ books: author.books });
