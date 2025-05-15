@@ -32,92 +32,83 @@ function Register({ isOpen, onClose, switchModal }) {
     dispatch(registerUser(data));
   };
 
-  return (
-      <div
-        className="background"
-      >
-        <form onSubmit={handleSubmit(onSubmit)} className="form-container">
+ return (
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-neutral-600">
+      <div className="bg-white rounded-xl shadow-lg px-8 py-4 w-full max-w-sm">
+        <div className="flex justify-end pb-2">
+          <Link to="/"> <i className="fa-solid fa-xmark"></i></Link>
+        </div>
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <img className="mx-auto h-10 w-auto" src="/images/logo.png" alt="BookSelf Logo" />
+          <h1 className="font-mono text-3xl text-center mt-4 Typewriter">
+            Welcome to BookSelf<span className="text-white">.</span>
+          </h1>
+          <p className="mt-4 text-center text-base text- text-gray-600">Start exploring the vast world of literature.</p>
+        </div>
 
-            
-            <div className="form-title">
-              <div className="Logo">
-              <img src="/images/logo.png" alt="Bookself Logo" />
-            </div>
-                <h1 className="Typewriter">Welcome to Bookself</h1>
-              <div
-                className="ParagraphContainer"
-                style={{
-                  width: "250px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                  padding: "3px",
-                }}
-              >
-                <p className="SmallGrey">
-                  Start exploring the vast world of literature
-                </p>
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <div>
+              <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">Email</label>
+              <div className="mt-1">
+                <input
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border-2 border-gray-200 placeholder:text-gray-400 focus:border-orange-600 focus:ring-2 focus:ring-orange-200 sm:text-sm"
+                  type="email"
+                  name="email"
+                  id="email"
+                  {...register("email")}
+                  required
+                />
               </div>
             </div>
-            <div className="form-inputs">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                className="Input"
-                {...register("email")}
-                required
-              />
-              <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                className="Input"
-                {...register("username")}
-                required
-              />
-              <label htmlFor="password">Password</label>
-              <div
-                style={{
-                  position: "relative",
-                  left: "-4px",
-                }}
-              >
+
+            <div>
+              <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">Username</label>
+              <div className="mt-1">
                 <input
-                  type={passwordVisible ? "text" : "password"}
-                  className="Input"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border-2 border-gray-200 placeholder:text-gray-400 focus:border-orange-600 focus:ring-2 focus:ring-orange-200 sm:text-sm"
+                  type="username"
+                  name="username"
+                  id="username"
+                  {...register("username")}
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">Password</label>
+              </div>
+              <div className="mt-1">
+                <input
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border-2 border-gray-200 placeholder:text-gray-400 focus:border-orange-600 focus:ring-2 focus:ring-orange-200 sm:text-sm" 
+                  type="password"
+                  name="password"
+                  id="password"
                   {...register("password")}
                   required
                 />
-                <button
-                  className="eye"
-                  style={{
-                    background: "transparent",
-                    width: "18px",
-                    position: "absolute",
-                    right: "2px",
-                    top: "10px",
-                  }}
-                  onClick={() => {
-                    setPasswordVisible(!passwordVisible);
-                  }}
-                >
-                  {passwordVisible ? <Eye /> : <EyeSlash />}
-                </button>
               </div>
             </div>
-            <PrimaryButton text="Register" type="submit" />
-            <div className="textSeparator">
-              <hr className="separator" />
-              <p>or</p>
-              <hr className="separator" />
+
+            <div>
+              <button type="submit" className="flex w-full justify-center rounded-md bg-orange-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600">Sign in</button>
             </div>
-            <p className="SmallGrey">
-              Already have an account?{" "}
-              <Link to="/login"> Login</Link>
-            </p>
-        </form>
-      </div>  
-      );
+          </form>
+          <div className="flex items-center my-4">
+            <hr className="flex-grow h-0.5 border-t-0 bg-neutral-200" />
+            <span className="mx-4 text-sm text-gray-500 font-medium">OR</span>
+            <hr className="flex-grow h-0.5 border-t-0 bg-neutral-200" />
+          </div>
+          <p className="my-4 text-center text-sm/6 text-gray-500">
+            Already have an account?
+            <Link to="/login" className="font-semibold text-orange-600 hover:text-orange-500"> Log In.</Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Register;
