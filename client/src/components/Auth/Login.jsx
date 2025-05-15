@@ -7,6 +7,8 @@ import { loginUser } from "../../features/auth/authActions.js";
 import { ReactComponent as Eye } from "../assets/eye-solid.svg";
 import { ReactComponent as EyeSlash } from "../assets/eye-slash-solid.svg";
 import "./Register.css";
+import { toast } from "react-toastify";
+
 
 function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -23,6 +25,19 @@ function Login() {
   }, [navigate, user])
 
   const onSubmit = (data) => {
+    const { email, password } = data;
+    
+    if (!email || !password) {
+      toast.error("Please enter email and password.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)){
+      toast.error("Please enter valid email address.");
+      return;
+    }
+    
     dispatch(loginUser(data));
   };
 

@@ -8,9 +8,9 @@ import "./Register.css";
 import { ReactComponent as Eye } from "../assets/eye-solid.svg";
 import { ReactComponent as EyeSlash } from "../assets/eye-slash-solid.svg";
 import { PrimaryButton } from "../Button/Button.jsx";
+import { toast } from "react-toastify";
 
-
-function Register({ isOpen, onClose, switchModal }) {
+function Register() {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const { user, success } = useSelector((state) => state.auth);
@@ -20,19 +20,33 @@ function Register({ isOpen, onClose, switchModal }) {
 
   useEffect(() => {
     if (user) {
+      toast.success("Logged in :)");
       navigate('/profile')
     }
     if (success) {
+      toast.success("Account created! Please log in.");
       navigate('/login')
 
     }
-}, [user, navigate, success]);
+  }, [user, navigate, success]);
 
   const onSubmit = (data) => {
+    const { username, email, password } = data;
+    if (!username || !email || !password) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
     dispatch(registerUser(data));
   };
 
- return (
+  return (
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-neutral-600">
       <div className="bg-white rounded-xl shadow-lg px-8 py-4 w-full max-w-sm">
         <div className="flex justify-end pb-2">
@@ -82,7 +96,7 @@ function Register({ isOpen, onClose, switchModal }) {
               </div>
               <div className="mt-1">
                 <input
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border-2 border-gray-200 placeholder:text-gray-400 focus:border-orange-600 focus:ring-2 focus:ring-orange-200 sm:text-sm" 
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border-2 border-gray-200 placeholder:text-gray-400 focus:border-orange-600 focus:ring-2 focus:ring-orange-200 sm:text-sm"
                   type="password"
                   name="password"
                   id="password"

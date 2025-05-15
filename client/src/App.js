@@ -19,11 +19,22 @@ import ForumList from "./components/forum/ForumList";
 import ForumPage from "./components/forum/ForumPage";
 import ForumCreateForm from "./components/forum/ForumCreateForm";
 import GroupPage from "./components/groups/GroupPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <BrowserRouter>
       <Header />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="light"
+      />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

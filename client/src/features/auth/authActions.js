@@ -1,11 +1,12 @@
 import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 const url = "http://localhost:4000";
 
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async ({ username, email, password }) => {
+  async ({ username, email, password }, thunkAPI) => {
     try {
       const config = {
         headers: {
@@ -19,14 +20,16 @@ export const registerUser = createAsyncThunk(
         config
       );
     } catch (error) {
-      return error;
+      const errMsg = error?.response?.data?.msg || "Registration failed.";
+      toast.error(errMsg);
+      return thunkAPI.rejectWithValue(errMsg);
     }
   }
 );
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async ({ email, password }) => {
+  async ({ email, password }, thunkAPI) => {
     try {
       const config = {
         headers: {
@@ -41,7 +44,9 @@ export const loginUser = createAsyncThunk(
       );
       return data;
     } catch (error) {
-      return error;
+      const errMsg = error?.response?.data?.msg || "Login failed.";
+      toast.error(errMsg);
+      return thunkAPI.rejectWithValue(errMsg);
     }
   }
 );

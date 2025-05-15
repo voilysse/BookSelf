@@ -11,10 +11,16 @@ const Shelf = require("../models/shelf.model.js");
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
+
+    if (!username || !email || !password)
+      return res.status(400).json({ msg: "All fields are required." });
+
     const userExists = await User.findOne({ email });
 
     if (userExists)
-      return res.status(400).json({ msg: "User already exists." });
+      return res
+        .status(400)
+        .json({ success: false, msg: "User already exists." });
 
     const salt = await bcryptjs.genSalt(10);
     const hash = await bcryptjs.hash(password, salt);
@@ -58,6 +64,7 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    
     if (!email) return res.status(400).json({ msg: "Enter valid email" });
     if (!password) return res.status(400).json({ msg: "Enter valid password" });
 
@@ -85,15 +92,13 @@ router.post("/login", async (req, res) => {
 //logout
 router.post("/logout", (req, res) => {
   res.clearCookie("token");
-  res.json({ success: true, msg: "Logged out." });
+  res.json({ msg: "Logged out." });
 });
 
 //get curr user
 router.get("/profile", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).populate(
-      "shelves"
-    );
+    const user = await User.findById(req.user.userId).populate("shelves");
     if (!user)
       return res.status(404).json({ msg: "User does not exist.", err });
 
