@@ -126,6 +126,9 @@ router.post("/:id/like", auth, async (req, res) => {
     if (review.likes.includes(req.user.userId))
       return res.status(400).json({ message: "Review is already liked." });
 
+    if (review.dislikes.includes(req.user.userId))
+      await review.updateOne({ $pull: { dislikes: req.user.userId } });
+
     await review.updateOne({ $push: { likes: req.user.userId } });
 
     res.status(200).json({ message: "Review liked." });
@@ -147,6 +150,46 @@ router.post("/:id/unlike", auth, async (req, res) => {
     await review.updateOne({ $pull: { likes: req.user.userId } });
 
     res.status(200).json({ message: "Review unliked." });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// dislike
+router.post("/:id/dislike", auth, async (req, res) => {
+  try {
+    const review = await Review.findById(req.params.id);
+
+    if (req.user.userId === review.user.toString())
+      return res.status(400).json({ message: "Can't dislike your own review." });
+
+    if (review.dislikes.includes(req.user.userId))
+      return res.status(400).json({ message: "Review is already disliked." });
+
+    if (review.likes.includes(req.user.userId))
+      await review.updateOne({ $pull: { likes: req.user.userId } });
+
+    await review.updateOne({ $push: { dislikes: req.user.userId } });
+
+    res.status(200).json({ message: "Review disliked." });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// undislike
+router.post("/:id/undislike", auth, async (req, res) => {
+  try {
+    const review = await Review.findById(req.params.id);
+
+    if (req.user.userId === review.user.toString())
+      return res.status(400).json({ message: "Can't dislike your own review." });
+    if (!review.likes.includes(req.user.userId))
+      return res.status(400).json({ message: "Review is already undisliked." });
+
+    await review.updateOne({ $pull: { dislikes: req.user.userId } });
+
+    res.status(200).json({ message: "Review undisliked." });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -250,6 +293,9 @@ router.post("replies/:id/like", auth, async (req, res) => {
     if (reply.likes.includes(req.user.userId))
       return res.status(400).json({ message: "Reply is already liked." });
 
+    if (reply.dislikes.includes(req.user.userId))
+      await reply.updateOne({ $pull: { dislikes: req.user.userId } });
+
     await reply.updateOne({ $push: { likes: req.user.userId } });
 
     res.status(200).json({ message: "Reply liked." });
@@ -272,6 +318,48 @@ router.post("replies/:id/unlike", auth, async (req, res) => {
     await reply.updateOne({ $pull: { likes: req.user.userId } });
 
     res.status(200).json({ message: "Reply unliked." });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
+// dislike
+router.post("replies/:id/dislike", auth, async (req, res) => {
+  try {
+    const reply = await Reply.findById(req.params.id);
+
+    if (req.user.userId === reply.user.toString())
+      return res.status(400).json({ message: "Can't dislike your own replies." });
+
+    if (reply.likes.includes(req.user.userId))
+      return res.status(400).json({ message: "Reply is already disliked." });
+
+    if (reply.likes.includes(req.user.userId))
+      await reply.updateOne({ $pull: { likes: req.user.userId } });
+
+    await reply.updateOne({ $push: { dislikes: req.user.userId } });
+
+    res.status(200).json({ message: "Reply disliked." });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// undislike
+router.post("replies/:id/undislike", auth, async (req, res) => {
+  try {
+    const reply = await Reply.findById(req.params.id);
+
+    if (req.user.userId === reply.user.toString())
+      return res.status(400).json({ message: "Can't dislike your own replies." });
+
+    if (!reply.likes.includes(req.user.userId))
+      return res.status(400).json({ message: "Reply is already undisliked." });
+
+    await reply.updateOne({ $pull: { dislikes: req.user.userId } });
+
+    res.status(200).json({ message: "Reply undisliked." });
   } catch (err) {
     res.status(500).json(err);
   }

@@ -133,6 +133,20 @@ export const bookApi = createApi({
       }),
       invalidatesTags: ['Review'],
     }),
+    dislikeReview: builder.mutation({
+      query: (id) => ({
+        url: `/reviews/${id}/dislike`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Review'],
+    }),
+    undislikeReview: builder.mutation({
+      query: (id) => ({
+        url: `/reviews/${id}/undislike`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Review'],
+    }),
 
     // ──────────────── REPLIES ────────────────
     getRepliesForReview: builder.query({
@@ -180,6 +194,20 @@ export const bookApi = createApi({
       }),
       invalidatesTags: ['Reply'],
     }),
+    dislikeReply: builder.mutation({
+      query: (id) => ({
+        url: `/reviews/replies/${id}/dislike`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Reply'],
+    }),
+    undislikeReply: builder.mutation({
+      query: (id) => ({
+        url: `/reviews/replies/${id}/undislike`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Reply'],
+    }),
   }),
 });
 
@@ -206,6 +234,8 @@ export const {
   useDeleteReviewMutation,
   useLikeReviewMutation,
   useUnlikeReviewMutation,
+  useDislikeReviewMutation,
+  useUndislikeReviewMutation,
 
   useGetRepliesForReviewQuery,
   useGetReplyQuery,
@@ -214,4 +244,6 @@ export const {
   useDeleteReplyMutation,
   useLikeReplyMutation,
   useUnlikeReplyMutation,
+  useDislikeReplyMutation,
+  useUndislikeReplyMutation,
 } = bookApi;

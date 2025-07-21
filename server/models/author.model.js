@@ -15,6 +15,9 @@ const authorSchema = new Schema({
     deathDate: { 
         type: Date, 
     },
+    img: { 
+        type: String, 
+    },
     books: [{
         type: Schema.Types.ObjectId,
         ref: 'Book'

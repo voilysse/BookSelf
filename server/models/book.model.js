@@ -22,7 +22,14 @@ const bookSchema = new Schema({
     },
     genre: [{
         type: String
-    }]
+    }],
+    language: {
+        type: String
+    },
+    released: {
+        type: Date,
+        default: Date.now
+    },
 })
 
 module.exports = mongoose.model('Book', bookSchema);

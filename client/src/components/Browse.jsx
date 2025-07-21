@@ -5,7 +5,7 @@ import BookList from "./books/BookList";
 
 export default function Browse() {
   return (
-    <div className="max-w-xl mx-auto mt-8">
+    <div className="max-w-6xl mx-auto mt-8">
       <h1>Browse</h1>
       <BookList/>
     </div>

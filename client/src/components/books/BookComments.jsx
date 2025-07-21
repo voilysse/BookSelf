@@ -2,162 +2,60 @@ import mockComments from "../mockComments.js";
 import { ReactComponent as BoldIcon } from "../assets/bold-solid.svg";
 import { ReactComponent as ItalicIcon } from "../assets/italic-solid.svg";
 import { ReactComponent as UnderlineIcon } from "../assets/underline-solid.svg";
-import "./BookComments.css";
-import { useRef } from "react";
+import { useGetBookReviewsQuery } from "../../features/bookApi";
 import CommentCard from "./CommentCard.jsx";
 import OrangeLabel from "../OrangeLabel.jsx";
 import OrangeButton from "../OrangeButton.jsx";
-import { useGetBookReviewsQuery } from "../../features/bookApi";
-
 
 function BookComments({ book, titleVisible = true }) {
-const { data, isLoading } = useGetBookReviewsQuery(book);
-  
-    if (isLoading) return <div>Loading...</div>;
+  const { data, isLoading } = useGetBookReviewsQuery(book);
+
+  if (isLoading) return <div>Loading...</div>;
 
   const commentsNum = data.reviews.length;
-  const inputHeight = 65;
-  /*
-  const textareaRef = useRef(null);
-  const handleClick = () => {
-    const el = textareaRef.current;
-    if (el) {
-      el.selectionStart = el.selectionEnd = el.value.length;
-    }
-  };
-  */
+
   return (
-    <div
-      className="CommentsContainer"
-      style={{
-        boxSizing: "border-box",
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#fff",
-        borderRadius: "2%",
-        boxShadow: "0 0 5px rgba(0,0,0,0.5)",
-        padding: "2%",
-      }}
-    >
-      <div
-        className="CommentInput"
-        style={{
-          boxSizing: "border-box",
-          width: "100%",
-          height: "25%",
-          backgroundColor: "#f1f1f1",
-          borderRadius: "10px",
-          padding: "8px",
-        }}
-      >
+    <div className="w-full bg-white rounded-xl shadow-md p-6 space-y-6">
+      {/*
+      <div className="bg-gray-100 rounded-lg p-4 space-y-3">
         <textarea
           spellCheck="false"
           placeholder="Leave a review..."
-          style={{
-            boxSizing: "border-box",
-            width: "100%",
-            height: `${inputHeight}%`,
-            borderRadius: "10px",
-            resize: "none",
-            background: "transparent",
-            border: "none",
-            color: "rgba(0,0,0,0.6)",
-            fontFamily: "Arial, sans-serif",
-            fontWeight: "normal",
-            lineHeight: "1",
-            letterSpacing: "0.5px",
-            fontSize: "14px",
-          }}
+          className="w-full h-24 resize-none rounded-lg border-none bg-transparent text-gray-700 placeholder-gray-500 focus:outline-none"
         ></textarea>
-        <div
-          className="IconBar"
-          style={{
-            boxSizing: "border-box",
-            display: "flex",
-            justifyContent: "space-between",
-            alignContent: "center",
-            alignItems: "center",
-            width: "100%",
-            height: `${100 - inputHeight}%`,
-            borderRadius: `${50 - inputHeight / 2}px`,
-          }}
-        >
-          <div
-            className="EditIcons"
-            style={{
-              boxSizing: "border-box",
-              justifySelf: "flex-start",
-              alignContent: "center",
-              height: "100%",
-              paddingLeft: "15px",
-            }}
-          >
-            <BoldIcon style={{ width: "10px", paddingRight: "10px" }} />
-            <ItalicIcon style={{ width: "10px", paddingRight: "10px" }} />
-            <UnderlineIcon style={{ width: "12px", paddingRight: "10px" }} />
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 text-gray-500">
+            <BoldIcon className="w-4 h-4 hover:text-gray-700 cursor-pointer" />
+            <ItalicIcon className="w-4 h-4 hover:text-gray-700 cursor-pointer" />
+            <UnderlineIcon className="w-4 h-4 hover:text-gray-700 cursor-pointer" />
           </div>
-          <div style={{ marginRight: "3px" }}>
-            <OrangeButton size={15} text="Submit" />
-          </div>
+          <OrangeButton size={15} text="Submit" />
         </div>
       </div>
-      <div
-        className="Divider"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-          height: "30px",
-          width: "100%",
-        }}
-      >
-        <div
-          style={{
-            height: "2px",
-            width: "100%",
-            backgroundColor: " rgba(0,0,0,0.1)",
-          }}
-        ></div>
-      </div>
+
+      <hr className="border-t border-gray-200" />
+*/}
+      {/* Title + Review Count */}
       {titleVisible && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
-          <h1
-            style={{
-              margin: "0 10px 0 10px",
-              fontSize: "20px",
-            }}
-          >
-            Reviews
-          </h1>
+        <div className="flex items-center gap-3 mb-2">
+          <h2 className="text-xl font-semibold text-gray-800">Reviews</h2>
           <OrangeLabel content={commentsNum} size={14} />
         </div>
       )}
 
-      <div
-        className="CommentsDisplay"
-        style={{
-          width: "100%",
-          height: "60%",
-          boxSizing: "border-box",
-          display: "flex",
-          gap: "20px",
-          flexDirection: "column",
-          overflow: "scroll",
-          overflowX: "hidden",
-          alignItems: "stretch",
-        }}
-      >
-        {data.reviews.map((com, index) => (
-          <CommentCard key={index} comment={com} />
-        ))}
+      {/* Comments */}
+      <div className="flex flex-col gap-6 max-h-[500px] overflow-y-auto pr-1">
+        {commentsNum === 0 ? (
+          <p className="text-gray-500 italic text-center">No reviews yet. Be the first to leave one!</p>
+        ) : (
+          data.reviews.map((com, index) => (
+            <CommentCard key={index} comment={com} />
+          ))
+        )}
       </div>
     </div>
   );
 }
+
 export default BookComments;

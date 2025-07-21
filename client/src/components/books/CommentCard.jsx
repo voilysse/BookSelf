@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ReactComponent as ThumbsUp } from "../assets/thumbs-up-solid.svg";
 import { ReactComponent as ThumbsDown } from "../assets/thumbs-down-solid.svg";
-import "./CommentCard.css";
 import { Link } from "react-router";
 
 function CommentCard({ comment, showReplies = true }) {
@@ -37,40 +36,19 @@ function CommentCard({ comment, showReplies = true }) {
   }, 60000);
 
   return (
-    <div
-      className="CardContainer"
-      style={{
-        width: "100%",
-        backgroundColor: "white",
-        margin: "2px",
-        display: "flex",
-        scrollbarWidth: "thin",
-        scrollbarColor: "transparent transparent",
-      }}
-    >
-      <div
-        className="ProfilePicture"
-        style={{
-          width: `${imgWidth}px`,
-          display: "flex",
-          flexDirection: "column",
-          alignContent: "center",
-          alignItems: "center",
-        }}
-      >
+    <div className="flex gap-4 w-full pt-4">
+      <div className="flex flex-col items-center relative">
+
         <img
-          src={comment.profilePic}
-          style={{
-            borderRadius: "50%",
-            aspectRatio: "1",
-            width: `${imgWidth}px`,
-            height: `${imgWidth}px`,
-          }}
+          src={comment.user.img}
+          alt={comment.user.username}
+          className="w-12 h-12 rounded-full object-cover shadow-sm"
         />
+
         {showReplies && comment.replies && comment.replies.length > 0 && (
           <div
             style={{
-              height: "100%",
+              height: "55%",
               width: "10px",
               transform: "translateX(50%)",
               borderLeft: "2px solid rgba(0,0,0,0.1)",
@@ -80,67 +58,43 @@ function CommentCard({ comment, showReplies = true }) {
           ></div>
         )}
       </div>
-      <div className="RightSide">
-        <div
-          className="NameTag"
-          style={{
-            height: `${imgWidth}px`,
-            alignContent: "center",
-            color: "rgba(0,0,0,0.8)",
-            margin: "0 10px 0 10px",
-            fontWeight: 600,
-          }}
-        >
-         <bold><Link to={`/users/${comment.user._id}`}> @{comment.user.username}</Link></bold>
 
-         
-          <bold
-            style={{
-              marginLeft: "10px",
-              fontSize: "14px",
-              color: "rgba(0,0,0,0.5)",
-            }}
-          >
-            {time}
-          </bold>
+      <div className="flex-1 space-y-2">
+        <div className="flex justify-between text-sm text-gray-600">
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/users/${comment.user._id}`}
+              className="font-semibold text-gray-800 hover:text-rat_base"
+            >
+              @{comment.user.username}
+            </Link>
+            <span className="text-rat_light">•</span>
+            <span className="text-rat_light"> {time}</span>
+          </div>
         </div>
-        <div className="TextContent">
-          <p
-            style={{
-              color: "rgba(0,0,0,0.8)",
-              margin: "5px",
-              fontSize: "15px",
-            }}
-          >
-            {comment.text}
-          </p>
-        </div>
-        <div className="InfoTag" style={{ display: "flex" }}>
-          <ThumbsUp
-            className="Thumb"
-            style={{ width: "16px", margin: "0 5px 0 5px" }}
-          />
-          <ThumbsDown
-            className="Thumb"
-            style={{ width: "16px", margin: "0 5px 0 5px" }}
-          />
-        </div>
-        <div
-          className="Replies"
-          style={{
-            marginTop: "10px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "5px",
-          }}
-        >
-          {showReplies &&
-            comment.replies &&
-            comment.replies.length > 0 &&
-            comment.replies.map((rep, index) => (
-              <CommentCard id={index} comment={rep} />
+
+        <p className="text-gray-800 text-base leading-relaxed">
+          {comment.text}
+        </p>
+
+        <div className="flex gap-4 text-gray-500 items-center text-sm">
+          <button className="flex items-center gap-1 fill-rat_lightest hover:fill-rat_base hover:cursor-pointer transition">
+            <ThumbsUp className="w-4  " />
+            <span>{comment.likes.length || 0}</span>
+          </button>
+
+          <button className="flex items-center gap-1 fill-rat_lightest hover:fill-rat_base hover:cursor-pointer transition">
+            <ThumbsDown className="w-4  " />
+            <span>{comment.dislikes.length || 0}</span>
+          </button>        </div>
+
+        {showReplies && comment.replies && comment.replies.length > 0 && (
+          <div className="mt-4 pl-4 space-y-4">
+            {comment.replies.map((rep, index) => (
+              <CommentCard key={index} comment={rep} showReplies={true} />
             ))}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -62,7 +62,7 @@ function Login() {
               <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">Email</label>
               <div className="mt-1">
                 <input
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border-2 border-gray-200 placeholder:text-gray-400 focus:border-orange-600 focus:ring-2 focus:ring-orange-200 sm:text-sm"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border-2 border-gray-200 placeholder:text-gray-400 focus:border-amber-600 focus:ring-2 focus:ring-amber-200 sm:text-sm"
                   type="email"
                   name="email"
                   id="email"
@@ -78,7 +78,7 @@ function Login() {
               </div>
               <div className="mt-1">
                 <input
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border-2 border-gray-200 placeholder:text-gray-400 focus:border-orange-600 focus:ring-2 focus:ring-orange-200 sm:text-sm"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border-2 border-gray-200 placeholder:text-gray-400 focus:border-amber-600 focus:ring-2 focus:ring-amber-200 sm:text-sm"
                   type="password"
                   name="password"
                   id="password"
@@ -87,12 +87,12 @@ function Login() {
                 />
               </div>
               <div className="text-sm flex justify-start">
-                <a href="#" className="font-semibold text-orange-600 hover:text-orange-500">Forgot password?</a>
+                <a href="#" className="font-semibold text-amber-600 hover:text-amber-500">Forgot password?</a>
               </div>
             </div>
 
             <div>
-              <button type="submit" className="flex w-full justify-center rounded-md bg-orange-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600">Sign in</button>
+              <button type="submit" className="flex w-full justify-center rounded-md bg-amber-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-amber-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600">Sign in</button>
             </div>
           </form>
           <div className="flex items-center my-4">
@@ -102,7 +102,7 @@ function Login() {
           </div>
           <p className="my-4 text-center text-sm/6 text-gray-500">
             Don't have an account?
-            <Link to="/register" className="font-semibold text-orange-600 hover:text-orange-500"> Register.</Link>
+            <Link to="/register" className="font-semibold text-amber-600 hover:text-amber-500"> Register.</Link>
           </p>
         </div>
       </div>

@@ -22,6 +22,9 @@ import GroupPage from "./components/groups/GroupPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import "@fontsource/rubik"; 
+import "@fontsource/rubik/500.css";
+
 function App() {
   return (
     <BrowserRouter>

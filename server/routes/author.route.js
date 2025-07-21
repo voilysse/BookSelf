@@ -30,13 +30,14 @@ router.get("/:id", async (req, res) => {
 // create a new author
 router.post("/create", async (req, res) => {
   try {
-    const { name, biography, birthDate, deathDate } = req.body;
+    const { name, biography, birthDate, deathDate, img } = req.body;
 
     const newAuthor = await Author.create({
       name,
       biography,
       birthDate,
       deathDate,
+      img
     });
     const author = await newAuthor.save();
     res.status(201).json({ author });
@@ -56,6 +57,7 @@ router.put("/:id", async (req, res) => {
           biography: req.body.biography,
           birthDate: req.body.birthDate,
           deathDate: req.body.deathDate,
+          img: req.body.img,
         },
       },
       { new: true }

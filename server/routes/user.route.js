@@ -44,6 +44,7 @@ router.put("/", auth, async (req, res) => {
           email: req.body.email,
           biography: req.body.biography,
           password: req.body.password,
+          img: req.body.img
         },
       },
       { new: true }

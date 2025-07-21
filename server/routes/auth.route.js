@@ -15,12 +15,13 @@ router.post("/register", async (req, res) => {
     if (!username || !email || !password)
       return res.status(400).json({ msg: "All fields are required." });
 
-    const userExists = await User.findOne({ email });
+    const userExistsEmail = await User.findOne({ email });
+    if (userExistsEmail)
+      return res.status(400).json({ success: false, msg: "Email is already in use." });
 
-    if (userExists)
-      return res
-        .status(400)
-        .json({ success: false, msg: "User already exists." });
+    const userExistsUsername = await User.findOne({ username });
+    if (userExistsUsername)
+      return res.status(400).json({ success: false, msg: "Username is already in use." });
 
     const salt = await bcryptjs.genSalt(10);
     const hash = await bcryptjs.hash(password, salt);
@@ -29,6 +30,7 @@ router.post("/register", async (req, res) => {
       username,
       email,
       password: hash,
+      img: "https://i.pinimg.com/736x/bc/7a/0c/bc7a0c399990de122f1b6e09d00e6c4c.jpg"
     });
 
     // Create default shelves
