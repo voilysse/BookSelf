@@ -23,13 +23,14 @@ export default function BookPage() {
   const { data, isLoading } = useGetBookQuery(id);
 
   const { data: reviewData } = useGetBookReviewsQuery(id);
+
   const avgRating =
     reviewData?.reviews?.length > 0
       ? reviewData.reviews.reduce((sum, r) => sum + r.rating, 0) /
       reviewData.reviews.length
       : 0;
 
-  const reviewCount = reviewData.reviews.length;
+const reviewCount = reviewData?.reviews?.length || 0;
   console.log(reviewData)
 
   if (isLoading) return <div>Loading...</div>;
