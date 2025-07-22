@@ -50,7 +50,7 @@ function App() {
         <Route path="/shelves" element={<UserShelves />} />
         <Route path="/community" element={<Community />} />
         <Route path="/users" element={<UserList />} />
-        <Route path="/users/:id" element={<UserProfile />} />
+        <Route path="/users/:id" element={<Profile />} />
         <Route path="/users/:id/followers" element={<UserListFollowers />} />
         <Route path="/users/:id/following" element={<UserListFollowing />} />
         <Route path="/books/:id" element={<BookPage />} />

@@ -1,10 +1,11 @@
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../features/auth/authSlice";
 import { useState } from "react";
-import { useUpdateUserMutation } from "../../features/userApi";
 import bookStack from "../assets/book-stack.png";
 import penReview from "../assets/review-pen.png";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useGetUserQuery } from "../../features/userApi";
+import { useGetUserReviewsQuery } from "../../features/bookApi";
 
 const About = () => {
   return <div>about</div>;
@@ -30,7 +31,7 @@ const Statistics = () => {
   return <>stats</>;
 };
 
-const Tabs = ({}) => {
+const Tabs = ({ }) => {
   const tabs = [
     "About",
     "Bookshelves",
@@ -53,11 +54,10 @@ const Tabs = ({}) => {
                 setActiveTab(tab);
               }}
               className={`px-4 py-2 text-sm font-medium  
-            ${
-              activeTab === tab
-                ? "text-gray-900"
-                : "text-rat_light hover:text-rat_base"
-            }`}
+            ${activeTab === tab
+                  ? "text-gray-900"
+                  : "text-rat_light hover:text-rat_base"
+                }`}
             >
               {tab}
             </button>
@@ -78,7 +78,7 @@ const Tabs = ({}) => {
   );
 };
 
-const Devider = ({}) => {
+const Divider = ({ }) => {
   return (
     <div className="flex items-center my-4">
       <hr className="flex-grow h-0.5 border-t-0 bg-rat_lightest" />
@@ -87,22 +87,27 @@ const Devider = ({}) => {
 };
 
 const Profile = () => {
-  const user = useSelector(selectCurrentUser);
-  const welcome = user ? `Welcome user ${user.username}!` : "Welcome!";
-  const profilePic = user.img;
-  const username = user.username;
-  const date = new Date(user.created);
-  const followers = user.followers.length;
-  const following = user.following.length;
-  const readBooks = user.shelves[0].length;
+  const { id } = useParams();
+  const { user } = useSelector((state) => state.auth);
+  const userId = id || user?._id;
+  const { data: userData, isLoading: isLoadingUser } = useGetUserQuery(userId);
+  const { data: reviewData, isLoading: isLoadingReview } = useGetUserReviewsQuery(userId);
+
+  if (isLoadingUser || isLoadingReview) return <div>Loading...</div>;
+
+
+  const profilePic = userData.user.img;
+  const username = userData.user.username;
+  const date = new Date(userData.user.created);
+  const followers = userData.user.followers.length;
+  const following = userData.user.following.length;
+  const numReviews = reviewData.reviews.length;
+  const readBooks = 0;
   const genres = ["Fantasy", "Adventure", "Romance", "Horror"];
 
   return (
     <>
-      <div
-        className="flex flex-col gap-4 items-center justify-center 
-      min-h-screen bg-white pt-10"
-      >
+      <div className="flex flex-col gap-4 items-center justify-center min-h-screen bg-white pt-10">
         {/*Upper Info Card*/}
         <div className="flex last:h-80 w-4/6">
           {/*Profile Info*/}
@@ -139,21 +144,21 @@ const Profile = () => {
               <div className="flex gap-3 h-3/4 shadow-md hover:shadow-rat_light shadow-white p-2 rounded-lg">
                 <img className="h-full" src={bookStack} alt="Books"></img>
                 <div className="flex flex-col justify-center items-center">
-                  <b className="text-xl text-gray-900">100{readBooks}</b>
+                  <b className="text-xl text-gray-900">{readBooks}</b>
                   <p className="text-xs text-gray-600">books read</p>
                 </div>
               </div>
               <div className="flex gap-3 h-3/4 shadow-md hover:shadow-rat_light shadow-white p-2 rounded-lg">
                 <img className="h-full" src={penReview} alt="Books"></img>
                 <div className="flex flex-col justify-center items-center">
-                  <b className="text-xl text-gray-900">100{readBooks}</b>
+                  <b className="text-xl text-gray-900">{numReviews}</b>
                   <p className="text-xs text-gray-600">written reviews</p>
                 </div>
               </div>
             </div>
             {/*My genres*/}
             <div>
-              <Devider />
+              <Divider />
               <h2 className="text-sm text-gray-700 mb-2 italic">
                 MY GENRES
               </h2>{" "}
