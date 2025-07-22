@@ -2,23 +2,179 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { useState } from "react";
 import { useUpdateUserMutation } from "../../features/userApi";
+import bookStack from "../assets/book-stack.png";
+import penReview from "../assets/review-pen.png";
+import { Link } from "react-router-dom";
+
+const About = () => {
+  return <div>about</div>;
+};
+
+const Bookshelves = () => {
+  return <div>bookshelves</div>;
+};
+
+const Reviews = () => {
+  return <div>reviews</div>;
+};
+
+const Followers = () => {
+  return <>followers</>;
+};
+
+const Following = () => {
+  return <>following</>;
+};
+
+const Statistics = () => {
+  return <>stats</>;
+};
+
+const Tabs = ({}) => {
+  const tabs = [
+    "About",
+    "Bookshelves",
+    "Reviews",
+    "Followers",
+    "Following",
+    "Statistics",
+  ];
+  const [activeTab, setActiveTab] = useState("About");
+
+  return (
+    <div className="w-full">
+      {/*Tab Buttons*/}
+      <div className="flex items-center justify-center">
+        {tabs.map((tab) => (
+          <div className="flex flex-col">
+            <button
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+              }}
+              className={`px-4 py-2 text-sm font-medium  
+            ${
+              activeTab === tab
+                ? "text-gray-900"
+                : "text-rat_light hover:text-rat_base"
+            }`}
+            >
+              {tab}
+            </button>
+            {activeTab === tab && <span className="h-1 w-full bg-gray-900" />}
+          </div>
+        ))}
+      </div>
+      {/*Tab Contents*/}
+      <div className="w-full min-h-[200px] bg-gray-50 p-4 border border-gray-200">
+        {activeTab === "About" && <About />}
+        {activeTab === "Bookshelves" && <Bookshelves />}
+        {activeTab === "Reviews" && <Reviews />}
+        {activeTab === "Followers" && <Followers />}
+        {activeTab === "Following" && <Following />}
+        {activeTab === "Statistics" && <Statistics />}
+      </div>
+    </div>
+  );
+};
+
+const Devider = ({}) => {
+  return (
+    <div className="flex items-center my-4">
+      <hr className="flex-grow h-0.5 border-t-0 bg-rat_lightest" />
+    </div>
+  );
+};
+
 const Profile = () => {
   const user = useSelector(selectCurrentUser);
   const welcome = user ? `Welcome user ${user.username}!` : "Welcome!";
+  const profilePic = user.img;
+  const username = user.username;
+  const date = new Date(user.created);
+  const followers = user.followers.length;
+  const following = user.following.length;
+  const readBooks = user.shelves[0].length;
+  const genres = ["Fantasy", "Adventure", "Romance", "Horror"];
 
   return (
-    
-    <><main
-      style={{
-        width: "100%",
-        height:"100%"
-      }}
-    ><section className="welcome">
-          <h1>{welcome}</h1>
-          <p>Glad to have you back!</p>
-      </section>
-      </main>
-      </>
+    <>
+      <div
+        className="flex flex-col gap-4 items-center justify-center 
+      min-h-screen bg-white pt-10"
+      >
+        {/*Upper Info Card*/}
+        <div className="flex last:h-80 w-4/6">
+          {/*Profile Info*/}
+          <div className=" flex flex-col items-center justify-start h-80 lg:w-1/5 md:w-1/3 w-full">
+            <img
+              src={profilePic}
+              alt="Profile picture"
+              className="w-32 h-32 p-1 rounded-full"
+            ></img>
+            <b className="text-gray-900">@{username}</b>
+            <p className="text-xs text-gray-500">
+              joined {date.getDate()}.{date.getMonth() + 1}.{date.getFullYear()}
+            </p>
+            <div className="flex items-center h-10 w-4/5">
+              <div className="flex flex-col items-center justify-start h-10 w-1/2">
+                <p className="text-md  text-gray-700">{followers}</p>
+                <p className="text-xs  text-gray-500">followers</p>
+              </div>
+              <div className="flex flex-col items-center justify-start h-10 w-1/2">
+                <p className="text-md  text-gray-700">{following}</p>
+                <p className="text-xs  text-gray-500">following</p>
+              </div>
+            </div>
+          </div>
+          {/*Last activity*/}
+          <div className="hidden lg:block h-80 w-2/5">
+            {/*Reading*/}
+            <div className="flex h-36 w-full p-3"></div>
+          </div>
+          {/*Likes and Stats*/}
+          <div className="flex flex-col justify-center items-center hidden md:block h-80 lg:w-2/5 w-2/3">
+            {/*Quick Stats*/}
+            <div className="flex gap-4 justify-center items-center w-full h-20">
+              <div className="flex gap-3 h-3/4 shadow-md hover:shadow-rat_light shadow-white p-2 rounded-lg">
+                <img className="h-full" src={bookStack} alt="Books"></img>
+                <div className="flex flex-col justify-center items-center">
+                  <b className="text-xl text-gray-900">100{readBooks}</b>
+                  <p className="text-xs text-gray-600">books read</p>
+                </div>
+              </div>
+              <div className="flex gap-3 h-3/4 shadow-md hover:shadow-rat_light shadow-white p-2 rounded-lg">
+                <img className="h-full" src={penReview} alt="Books"></img>
+                <div className="flex flex-col justify-center items-center">
+                  <b className="text-xl text-gray-900">100{readBooks}</b>
+                  <p className="text-xs text-gray-600">written reviews</p>
+                </div>
+              </div>
+            </div>
+            {/*My genres*/}
+            <div>
+              <Devider />
+              <h2 className="text-sm text-gray-700 mb-2 italic">
+                MY GENRES
+              </h2>{" "}
+              {genres.map((g) => (
+                <Link
+                  to={`/genres/${g.toLowerCase()}`}
+                  key={g}
+                  className="inline-block mr-1 mb-1 text-sm font-medium px-3 py-1 rounded-full bg-rat_lightest text-gray-800 hover:bg-rat_base hover:text-white transition"
+                >
+                  {g}
+                </Link>
+              ))}
+            </div>
+            {/*My likes???*/}
+          </div>
+        </div>
+        <div className="h-[500px] w-4/6">
+          <Tabs />
+        </div>
+      </div>
+    </>
   );
 };
 

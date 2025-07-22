@@ -24,6 +24,10 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "@fontsource/rubik"; 
 import "@fontsource/rubik/500.css";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+const theme = createTheme();
+
 
 function App() {
   return (
