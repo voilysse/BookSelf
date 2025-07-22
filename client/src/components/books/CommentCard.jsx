@@ -155,44 +155,57 @@ function CommentCard({ comment, showReplies = true, allowReply = true, isReply =
 
         <div className="flex justify-between text-gray-500 items-center text-sm">
           <div className="flex gap-4 text-gray-500 items-center text-sm">
-            {user._id === comment.user._id ? (
-              <button
-                onClick={handleLike}
-                className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
-              >
+            {user ? (
+              user._id === comment.user._id ? (
+                <button
+                  onClick={handleLike}
+                  className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
+                >
+                  <ThumbsUp className="w-4" />
+                  <span>{comment.likes.length}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleLike}
+                  className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+                >
+                  <ThumbsUp className="w-4" />
+                  <span>{comment.likes.length}</span>
+                </button>
+              )
+            ) : (
+              <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
                 <ThumbsUp className="w-4" />
                 <span>{comment.likes.length}</span>
-              </button>
-            ) : (
-              <button
-                onClick={handleLike}
-                className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
-              >
-                <ThumbsUp className="w-4" />
-                <span>{comment.likes.length}</span>
-              </button>
+              </div>
             )}
 
-            {user._id === comment.user._id ? (
 
-              <button
-                onClick={handleDislike}
-                className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
-              >
-                <ThumbsDown className="w-4" />
-                <span>{comment.dislikes.length}</span>
-              </button>
-
+            {user ? (
+              user._id === comment.user._id ? (
+                <button
+                  onClick={handleDislike}
+                  className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
+                >
+                  <ThumbsDown className="w-4" />
+                  <span>{comment.dislikes.length}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleDislike}
+                  className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+                >
+                  <ThumbsDown className="w-4" />
+                  <span>{comment.dislikes.length}</span>
+                </button>
+              )
             ) : (
-              <button
-                onClick={handleDislike}
-                className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
-              >
+              <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
                 <ThumbsDown className="w-4" />
                 <span>{comment.dislikes.length}</span>
-              </button>
-
+              </div>
             )}
+
           </div>
           {allowReply ?
             (<>
