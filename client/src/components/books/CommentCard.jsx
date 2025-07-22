@@ -2,10 +2,77 @@ import { useEffect, useState } from "react";
 import { ReactComponent as ThumbsUp } from "../assets/thumbs-up-solid.svg";
 import { ReactComponent as ThumbsDown } from "../assets/thumbs-down-solid.svg";
 import StarRating from "./StarRating";
+import { ReactComponent as MyIcon } from "../assets/forum.svg";
 import { Link } from "react-router";
+import { useSelector } from "react-redux";
 
-function CommentCard({ comment, showReplies = true }) {
-  const imgWidth = 40;
+import {
+  useLikeReviewMutation,
+  useUnlikeReviewMutation,
+  useDislikeReviewMutation,
+  useUndislikeReviewMutation,
+  useLikeReplyMutation,
+  useUnlikeReplyMutation,
+  useDislikeReplyMutation,
+  useUndislikeReplyMutation,
+} from "../../features/bookApi";
+
+function CommentCard({ comment, showReplies = true, allowReply = true, isReply = false }) {
+  const { user } = useSelector((state) => state.auth);
+  const [hasLiked, setHasLiked] = useState(comment.likes.includes(user?._id));
+  const [hasDisliked, setHasDisliked] = useState(comment.dislikes.includes(user?._id));
+
+  const [likeReview] = useLikeReviewMutation();
+  const [unlikeReview] = useUnlikeReviewMutation();
+  const [dislikeReview] = useDislikeReviewMutation();
+  const [undislikeReview] = useUndislikeReviewMutation();
+
+  const [likeReply] = useLikeReplyMutation();
+  const [unlikeReply] = useUnlikeReplyMutation();
+  const [dislikeReply] = useDislikeReplyMutation();
+  const [undislikeReply] = useUndislikeReplyMutation();
+
+  const handleLike = async () => {
+    if (!user || user._id === comment.user._id) return;
+
+    try {
+      if (hasLiked) {
+        await (isReply ? unlikeReply(comment._id) : unlikeReview(comment._id));
+        setHasLiked(false);
+      } else {
+        if (hasDisliked) {
+          await (isReply ? undislikeReply(comment._id) : undislikeReview(comment._id));
+          setHasDisliked(false);
+        }
+        await (isReply ? likeReply(comment._id) : likeReview(comment._id));
+        setHasLiked(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDislike = async () => {
+    if (!user || user._id === comment.user._id)
+      return;
+
+    try {
+      if (hasDisliked) {
+        await (isReply ? undislikeReply(comment._id) : undislikeReview(comment._id));
+        setHasDisliked(false);
+      } else {
+        if (hasLiked) {
+          await (isReply ? unlikeReply(comment._id) : unlikeReview(comment._id));
+          setHasLiked(false);
+        }
+        await (isReply ? dislikeReply(comment._id) : dislikeReview(comment._id));
+        setHasDisliked(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const n = new Date();
   const [now, setNow] = useState(n);
   const posted = new Date(comment.created);
@@ -86,27 +153,63 @@ function CommentCard({ comment, showReplies = true }) {
           {comment.text}
         </p>
 
-        <div className="flex gap-4 text-gray-500 items-center text-sm">
-          <button className="flex items-center gap-1 fill-rat_lightest hover:fill-rat_base hover:cursor-pointer transition">
-            <ThumbsUp className="w-4  " />
-            <span>{comment.likes.length || 0}</span>
-          </button>
+        <div className="flex justify-between text-gray-500 items-center text-sm">
+          <div className="flex gap-4 text-gray-500 items-center text-sm">
+            {user._id === comment.user._id ? (
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
+              >
+                <ThumbsUp className="w-4" />
+                <span>{comment.likes.length}</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+              >
+                <ThumbsUp className="w-4" />
+                <span>{comment.likes.length}</span>
+              </button>
+            )}
 
-          <button className="flex items-center gap-1 fill-rat_lightest hover:fill-rat_base hover:cursor-pointer transition">
-            <ThumbsDown className="w-4  " />
-            <span>{comment.dislikes.length || 0}</span>
-          </button>
+            {user._id === comment.user._id ? (
+
+              <button
+                onClick={handleDislike}
+                className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
+              >
+                <ThumbsDown className="w-4" />
+                <span>{comment.dislikes.length}</span>
+              </button>
+
+            ) : (
+              <button
+                onClick={handleDislike}
+                className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+              >
+                <ThumbsDown className="w-4" />
+                <span>{comment.dislikes.length}</span>
+              </button>
+
+            )}
+          </div>
+          {allowReply ?
+            (<>
+              {/*<MyIcon className="w-10"/>*/}
+              <span className="text-rat_base">Reply</span>
+            </>) : (<></>)}
         </div>
 
         {showReplies && comment.replies && comment.replies.length > 0 && (
           <div className="mt-4 pl-4 space-y-4">
             {comment.replies.map((rep, index) => (
-              <CommentCard key={index} comment={rep} showReplies={true} />
+              <CommentCard key={index} comment={rep} showReplies={true} allowReply={false} isReply={true} />
             ))}
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }
 export default CommentCard;

@@ -1,7 +1,18 @@
 import StarRating from "./StarRating";
 import { Link } from "react-router";
+import { useGetBookReviewsQuery } from "../../features/bookApi";
 
 export default function BookCard({ book }) {
+  const { data: reviewData } = useGetBookReviewsQuery(book._id);
+
+  const avgRating =
+    reviewData?.reviews?.length > 0
+      ? reviewData.reviews.reduce((sum, r) => sum + r.rating, 0) /
+      reviewData.reviews.length
+      : 0;
+
+  const reviewCount = reviewData?.reviews?.length || 0;
+
   return (
     <div className="w-36 flex flex-col gap-1 p-4 rounded-lg my-4">
       <Link to={`/books/${book._id}`}>
@@ -34,7 +45,7 @@ export default function BookCard({ book }) {
         ))}
       </div>
 
-      <StarRating rating={book.rating} size={60} />
+      <StarRating rating={avgRating} size={60} />
     </div>
   );
 }

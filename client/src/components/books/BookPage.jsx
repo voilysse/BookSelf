@@ -5,9 +5,6 @@ import StarRating from "./StarRating";
 import BookComments from "./BookComments";
 import { useGetBookReviewsQuery } from "../../features/bookApi";
 
-
-
-
 const formatDate = (dateString) => {
   if (!dateString) return '—';
   const date = new Date(dateString);
@@ -30,8 +27,7 @@ export default function BookPage() {
       reviewData.reviews.length
       : 0;
 
-const reviewCount = reviewData?.reviews?.length || 0;
-  console.log(reviewData)
+  const reviewCount = reviewData?.reviews?.length || 0;
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -55,12 +51,11 @@ const reviewCount = reviewData?.reviews?.length || 0;
               className="w-full rounded shadow-lg relative z-10"
             />
 
-            <div className="flex flex-col gap-2 mt-4 relative z-10">
+            <div className="flex flex-col gap-2 mt-4 relative z-10 leng">
             </div>
           </div>
         </div>
       </div>
-
 
       {/* Right column */}
       <div className="md:col-span-2 space-y-6 px-10">
@@ -85,7 +80,7 @@ const reviewCount = reviewData?.reviews?.length || 0;
           <div className="flex items-center gap-2 mt-6">
             <StarRating rating={avgRating} size={120} />
             <div className="flex items-center gap-2 mt-1">
-              <p className="text-md text-gray-700 font-medium">{avgRating.toFixed(1)} / 5</p>
+              <p className="text-md text-gray-700 font-medium">{avgRating.toFixed(1)}</p>
               <p className="text-md text-gray-500">({reviewCount} ratings)</p>
             </div>
           </div>
