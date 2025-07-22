@@ -3,6 +3,10 @@ import { useGetBookQuery } from "../../features/bookApi";
 import { Link } from "react-router-dom";
 import StarRating from "./StarRating";
 import BookComments from "./BookComments";
+import { useGetBookReviewsQuery } from "../../features/bookApi";
+
+
+
 
 const formatDate = (dateString) => {
   if (!dateString) return '—';
@@ -18,12 +22,22 @@ export default function BookPage() {
   const { id } = useParams();
   const { data, isLoading } = useGetBookQuery(id);
 
+  const { data: reviewData } = useGetBookReviewsQuery(id);
+  const avgRating =
+    reviewData?.reviews?.length > 0
+      ? reviewData.reviews.reduce((sum, r) => sum + r.rating, 0) /
+      reviewData.reviews.length
+      : 0;
+
+  const reviewCount = reviewData.reviews.length;
+  console.log(reviewData)
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-6 max-w-7xl mx-auto">
       {/* Left column */}
-      <div className="md:col-span-1">
+      <div className="col-span-1">
         <div className="sticky top-40 flex justify-center">
           <div className="relative w-64">
             <svg
@@ -48,14 +62,13 @@ export default function BookPage() {
 
 
       {/* Right column */}
-      <div className="md:col-span-2 space-y-6 px-6">
-
-        <div className="text-gray-800 font-sans mt-3" >
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
+      <div className="md:col-span-2 space-y-6 px-10">
+        <div className="text-gray-800 font-sans mt-4" >
+          <h1 className="text-4xl font-extrabold leading-tight tracking-tight">
             {data.book.title}
           </h1>
 
-          <div className="text-lg md:text-xl text-gray-600 mt-3 flex flex-wrap items-center gap-2">
+          <div className="text-lg  text-gray-600 mt-3 flex flex-wrap items-center gap-2">
             <span className="italic">by</span>
             {data.book.author.map((a) => (
               <Link
@@ -68,9 +81,14 @@ export default function BookPage() {
             ))}
           </div>
 
-          <div className="mt-6">
-            <StarRating rating={data.book.rating} size={140} />
+          <div className="flex items-center gap-2 mt-6">
+            <StarRating rating={avgRating} size={120} />
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-md text-gray-700 font-medium">{avgRating.toFixed(1)} / 5</p>
+              <p className="text-md text-gray-500">({reviewCount} ratings)</p>
+            </div>
           </div>
+
 
           <p className="mt-6 text-base leading-relaxed text-gray-700">
             {data.book.summary}
@@ -82,7 +100,7 @@ export default function BookPage() {
           <hr className="flex-grow h-0.5 border-t-0 bg-rat_lightest" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-16 text-sm text-gray-700">
+        <div className="grid grid-cols-2 gap-y-6 gap-x-16 text-sm text-gray-700">
 
           {/* Left Column */}
           <div className="space-y-4">
@@ -130,15 +148,15 @@ export default function BookPage() {
 
         {/* Author */}
         <div className="mt-8">
-          <h2 className="text-xl md:text-2xl text-gray-700 mb-2 italic">Written by</h2>
+          <h2 className="text-xl text-gray-700 mb-2 italic">Written by</h2>
 
           <div className="space-y-8">
             {data.book.author.map((a) => (
               <div
                 key={a._id}
-                className="flex flex-col md:flex-row gap-6 py-4 rounded"
+                className="flex flex-row gap-6 py-4 rounded"
               >
-                <div className="w-full md:w-40 shrink-0">
+                <div className="w-40 shrink-0">
                   <img
                     src={a.img}
                     alt={`Portrait of ${a.name}`}
@@ -149,7 +167,7 @@ export default function BookPage() {
                 <div className="flex-1">
                   <Link
                     to={`/authors/${a._id}`}
-                    className="text-lg md:text-xl font-bold text-gray-900 uppercase hover:text-rat_base transition"
+                    className="text-lg font-bold text-gray-900 uppercase hover:text-rat_base transition"
                   >
                     {a.name}
                   </Link>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ReactComponent as ThumbsUp } from "../assets/thumbs-up-solid.svg";
 import { ReactComponent as ThumbsDown } from "../assets/thumbs-down-solid.svg";
+import StarRating from "./StarRating";
 import { Link } from "react-router";
 
 function CommentCard({ comment, showReplies = true }) {
@@ -61,15 +62,23 @@ function CommentCard({ comment, showReplies = true }) {
 
       <div className="flex-1 space-y-2">
         <div className="flex justify-between text-sm text-gray-600">
-          <div className="flex items-center gap-2">
-            <Link
-              to={`/users/${comment.user._id}`}
-              className="font-semibold text-gray-800 hover:text-rat_base"
-            >
-              @{comment.user.username}
-            </Link>
-            <span className="text-rat_light">•</span>
-            <span className="text-rat_light"> {time}</span>
+          <div className="flex justify-between w-full">
+            <div className="flex items-center gap-2">
+              <Link
+                to={`/users/${comment.user._id}`}
+                className="font-semibold text-gray-800 hover:text-rat_base"
+              >
+                @{comment.user.username}
+              </Link>
+              {comment.rating ?
+                (<>
+                  <span className="text-rat_light">•</span>
+                  <StarRating rating={comment.rating} size={60} />
+                </>) : (<></>)}
+            </div>
+            <div>
+              <span className="text-rat_light"> {time}</span>
+            </div>
           </div>
         </div>
 
@@ -86,7 +95,8 @@ function CommentCard({ comment, showReplies = true }) {
           <button className="flex items-center gap-1 fill-rat_lightest hover:fill-rat_base hover:cursor-pointer transition">
             <ThumbsDown className="w-4  " />
             <span>{comment.dislikes.length || 0}</span>
-          </button>        </div>
+          </button>
+        </div>
 
         {showReplies && comment.replies && comment.replies.length > 0 && (
           <div className="mt-4 pl-4 space-y-4">
