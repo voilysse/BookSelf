@@ -6,7 +6,9 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useGetUserQuery } from "../../features/userApi";
 import { useGetUserReviewsQuery } from "../../features/bookApi";
-
+import UserCard from "./UserCard";
+import { useGetFollowersQuery } from "../../features/userApi";
+import { useGetFollowingQuery } from "../../features/userApi";
 const About = () => {
   return <div>about</div>;
 };
@@ -19,19 +21,29 @@ const Reviews = () => {
   return <div>reviews</div>;
 };
 
-const Followers = () => {
-  return <>followers</>;
+const Followers = ({ id }) => {
+  const { data, isLoading } = useGetFollowersQuery(id);
+  if (isLoading) {
+    return <div>Loading..</div>;
+  } else {
+    return data.followers.map((u) => <UserCard user={u} />);
+  }
 };
 
-const Following = () => {
-  return <>following</>;
+const Following = ({ id }) => {
+  const { data, isLoading } = useGetFollowingQuery(id);
+  if (isLoading) {
+    return <div>Loading..</div>;
+  } else {
+    return data.following.map((u) => <UserCard user={u} />);
+  }
 };
 
 const Statistics = () => {
   return <>stats</>;
 };
 
-const Tabs = ({ }) => {
+const Tabs = ({ id }) => {
   const tabs = [
     "About",
     "Bookshelves",
@@ -54,10 +66,11 @@ const Tabs = ({ }) => {
                 setActiveTab(tab);
               }}
               className={`px-4 py-2 text-sm font-medium  
-            ${activeTab === tab
-                  ? "text-gray-900"
-                  : "text-rat_light hover:text-rat_base"
-                }`}
+            ${
+              activeTab === tab
+                ? "text-gray-900"
+                : "text-rat_light hover:text-rat_base"
+            }`}
             >
               {tab}
             </button>
@@ -66,19 +79,19 @@ const Tabs = ({ }) => {
         ))}
       </div>
       {/*Tab Contents*/}
-      <div className="w-full min-h-[200px] bg-gray-50 p-4 border border-gray-200">
+      <div className="flex flex-col items-center justify-start w-full min-h-[200px]p-4 ">
         {activeTab === "About" && <About />}
         {activeTab === "Bookshelves" && <Bookshelves />}
         {activeTab === "Reviews" && <Reviews />}
-        {activeTab === "Followers" && <Followers />}
-        {activeTab === "Following" && <Following />}
+        {activeTab === "Followers" && <Followers id={id} />}
+        {activeTab === "Following" && <Following id={id} />}
         {activeTab === "Statistics" && <Statistics />}
       </div>
     </div>
   );
 };
 
-const Divider = ({ }) => {
+const Divider = ({}) => {
   return (
     <div className="flex items-center my-4">
       <hr className="flex-grow h-0.5 border-t-0 bg-rat_lightest" />
@@ -91,10 +104,9 @@ const Profile = () => {
   const { user } = useSelector((state) => state.auth);
   const userId = id || user?._id;
   const { data: userData, isLoading: isLoadingUser } = useGetUserQuery(userId);
-  const { data: reviewData, isLoading: isLoadingReview } = useGetUserReviewsQuery(userId);
-
+  const { data: reviewData, isLoading: isLoadingReview } =
+    useGetUserReviewsQuery(userId);
   if (isLoadingUser || isLoadingReview) return <div>Loading...</div>;
-
 
   const profilePic = userData.user.img;
   const username = userData.user.username;
@@ -176,7 +188,7 @@ const Profile = () => {
           </div>
         </div>
         <div className="h-[500px] w-4/6">
-          <Tabs />
+          <Tabs id={userId} />
         </div>
       </div>
     </>
