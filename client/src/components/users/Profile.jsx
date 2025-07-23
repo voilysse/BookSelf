@@ -147,7 +147,7 @@ const Profile = () => {
             <img
               src={profilePic}
               alt="Profile picture"
-              className="w-32 h-32 p-1 rounded-full"
+              className="drop-shadow-md shadow-rat_light object-cover w-32 h-32 p-1 rounded-full"
             ></img>
             <b className="text-gray-900">@{username}</b>
             <p className="text-xs text-gray-500">
