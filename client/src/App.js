@@ -15,8 +15,8 @@ import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import BookPage from "./components/books/BookPage";
 import AuthorPage from "./components/books/AuthorPage";
-import ForumList from "./components/forum/ForumList";
-import ForumPage from "./components/forum/ForumPage";
+import Forum from "./components/forum/Forum";
+import ForumThread from "./components/forum/ForumThread";
 import ForumCreateForm from "./components/forum/ForumCreateForm";
 import GroupPage from "./components/groups/GroupPage";
 import { ToastContainer } from "react-toastify";
@@ -51,9 +51,8 @@ function App() {
         <Route path="/users/:id/following" element={<UserListFollowing />} />
         <Route path="/books/:id" element={<BookPage />} />
         <Route path="/authors/:id" element={<AuthorPage />} />
-        <Route path="/forum" element={<ForumList />} />
-        <Route path="/forum/create" element={<ForumCreateForm />} />
-        <Route path="/forum/thread/:id" element={<ForumPage />} />
+        <Route path="/forum" element={<Forum />} />
+        <Route path="/forum/thread/:id" element={<ForumThread />} />
         <Route path="/groups/:id" element={<GroupPage />} />
         <Route element={<RequireAuth />}>
           <Route path="/profile" element={<Profile />} />

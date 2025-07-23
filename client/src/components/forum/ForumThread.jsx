@@ -1,46 +1,111 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useGetThreadQuery } from "../../features/forumApi";
 import ForumPost from "./ForumPost";
 import { Link } from "react-router-dom";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
+import PostModal from "./PostModal"
+import { ReactComponent as ThumbsUp } from "../assets/thumbs-up-solid.svg";
+import { ReactComponent as ThumbsDown } from "../assets/thumbs-down-solid.svg";
+import { useSelector } from "react-redux";
 
-const ForumThread = ({ thread, showReplies = true, allowReply = true, isReply = false }) => {
-const n = new Date();
-  const [now, setNow] = useState(n);
-  const posted = new Date(thread.created);
-  var secondsAgo = Math.floor((now - posted) / 1000);
-  const timeSince = () => {
-    const intervals = [
-      { label: "year", seconds: 31536000 },
-      { label: "month", seconds: 2592000 },
-      { label: "day", seconds: 86400 },
-      { label: "hour", seconds: 3600 },
-      { label: "minute", seconds: 60 },
-      { label: "second", seconds: 1 },
-    ];
-    var count = secondsAgo;
-    for (const i of intervals) {
-      count = Math.floor(secondsAgo / i.seconds);
-      if (count >= 1) {
-        return `${count} ${i.label}${count > 1 ? "s" : ""} ago`;
-      }
-    }
-    return "just now";
-  };
-  const [time, setTime] = useState(() => timeSince());
+import {
+  useGetThreadQuery,
+  useLikeThreadMutation,
+  useUnlikeThreadMutation,
+  useDislikeThreadMutation,
+  useUndislikeThreadMutation
+} from "../../features/forumApi";
+
+const formatDate = (dateString) => {
+  if (!dateString) return "—";
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+};
+
+const ForumThread = () => {
+  const { user } = useSelector((state) => state.auth);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const { id } = useParams();
+  const { data, isLoading } = useGetThreadQuery(id);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [hasDisliked, setHasDisliked] = useState(false);
+
+  const [likeThread] = useLikeThreadMutation();
+  const [unlikeThread] = useUnlikeThreadMutation();
+  const [dislikeThread] = useDislikeThreadMutation();
+  const [undislikeThread] = useUndislikeThreadMutation();
+
+  const [likeCount, setLikeCount] = useState(0);
+  const [dislikeCount, setDislikeCount] = useState(0);
 
   useEffect(() => {
-    setNow(() => Date());
-    secondsAgo = Math.floor((now - posted) / 1000);
-    setTime(() => timeSince());
-  }, 60000);
+    if (data?.thread) {
+      setLikeCount(data.thread.likes.length);
+      setDislikeCount(data.thread.dislikes.length);
+      setHasLiked(data.thread.likes.includes(user._id));
+      setHasDisliked(data.thread.dislikes.includes(user._id));
+    }
+  }, [data, user]);
 
+  if (isLoading) return <div>Loading...</div>;
+
+  const thread = data.thread;
+
+
+  const handleLike = async () => {
+    if (!user || user._id === thread.user._id) return;
+
+    try {
+      if (hasLiked) {
+        await unlikeThread(thread._id);
+        setHasLiked(false);
+        setLikeCount(prev => prev - 1);
+      } else {
+        if (hasDisliked) {
+          await undislikeThread(thread._id);
+          setHasDisliked(false);
+        }
+        await likeThread(thread._id);
+        setHasLiked(true);
+        setLikeCount(prev => prev + 1);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDislike = async () => {
+    if (!user || user._id === thread.user._id) return;
+
+    try {
+      if (hasDisliked) {
+        await undislikeThread(thread._id);
+        setHasDisliked(false);
+        setDislikeCount(prev => prev - 1);
+      } else {
+        if (hasLiked) {
+          await unlikeThread(thread._id);
+          setHasLiked(false);
+          setLikeCount(prev => prev - 1);
+        }
+        await dislikeThread(thread._id);
+        setHasDisliked(true);
+        setDislikeCount(prev => prev + 1);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
       {/* thread Card */}
-      <div className="bg-white rounded-3xl shadow-md border border-gray-100 p-6">
+      <div className="p-6">
         <div className="flex gap-2 max-w-xs">
           {thread.tags.map((g) => (
             <Link
@@ -52,29 +117,99 @@ const n = new Date();
             </Link>
           ))}
         </div>
-        <div className="flex items-start justify-between my-4">
+        <div className="flex justify-between my-4">
           <div>
             <h2 className="text-xl font-semibold text-gray-800">{thread.title}</h2>
-            <p className="text-sm text-gray-500 mt-1">{thread.user?.username} • {time}</p>
+            <div className="flex justify-end gap-2 text-sm text-gray-500 mt-1">
+              <Link to={`/users/${thread.user._id}`}>{thread.user?.username}</Link>
+              <span>•</span>
+              <span>{formatDate(thread.created)}</span>
+            </div>
           </div>
         </div>
         <p className="text-gray-700 mt-2 leading-relaxed">{thread.text}</p>
+
+        <div className="flex justify-between text-gray-500 items-center text-sm mt-4">
+          <div className="flex gap-4 text-gray-500 items-center text-sm">
+            {user ? (
+              user._id === thread.user._id ? (
+                <button
+                  onClick={handleLike}
+                  className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
+                >
+                  <ThumbsUp className="w-4" />
+                  <span>{likeCount}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleLike}
+                  className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+                >
+                  <ThumbsUp className="w-4" />
+                  <span>{likeCount}</span>
+                </button>
+              )
+            ) : (
+              <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
+                <ThumbsUp className="w-4" />
+                <span>{likeCount}</span>
+              </div>
+            )}
+            {user ? (
+              user._id === thread.user._id ? (
+                <button
+                  onClick={handleDislike}
+                  className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
+                >
+                  <ThumbsDown className="w-4" />
+                  <span>{dislikeCount}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleDislike}
+                  className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+                >
+                  <ThumbsDown className="w-4" />
+                  <span>{dislikeCount}</span>
+                </button>
+              )
+            ) : (
+              <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
+                <ThumbsDown className="w-4" />
+                <span>{dislikeCount}</span>
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => setModalOpen(true)}
+            className="px-4 py-2 bg-rat_base text-white rounded-lg hover:bg-opacity-90"
+          >
+            Reply
+          </button>
+
+          <PostModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            threadId={thread}
+          />
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center my-2">
+        <hr className="flex-grow h-0.5 border-t-0 bg-rat_lightest" />
       </div>
 
       {/* Replies */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-700">Replies</h3>
-        {thread.posts.length === 0 ? (
-          <p className="text-gray-500 italic">No replies yet. Be the first to reply!</p>
+      <div className="flex flex-col gap-6 max-h-[500px] overflow-y-auto pr-1">
+        
+        {data.posts && data.posts.length === 0 ? (
+          <p className="text-gray-500 italic text-center">The void.</p>
         ) : (
-          thread.posts.map((post) => (
-            <div key={post.id} className="rounded-xl border p-4 mx-4">
-              <ForumPost
-                post={post}
-                showReplies={true}
-                allowReply={true}
-                isReply={false}
-              />
+          data.posts.map((post) => (
+            <div key={post.id} className="rounded-xl border p-4">
+              <ForumPost post={post} />
             </div>
           ))
         )}
