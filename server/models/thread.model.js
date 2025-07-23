@@ -15,11 +15,18 @@ const ThreadSchema = new Schema({
     type: String,
     required: true,
   },
+  tags: [{
+      type: String
+  }],
   created: {
     type: Date,
     default: Date.now,
   },
   likes: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+  }],
+  dislikes: [{
       type: Schema.Types.ObjectId,
       ref: 'User'
   }]

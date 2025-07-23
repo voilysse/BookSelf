@@ -20,7 +20,7 @@ export const forumApi = createApi({
     }),
     getThread: builder.query({
       query: (id) => `/threads/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Thread', id }],
+      providesTags: ['Thread'],
     }),
     createThread: builder.mutation({
       query: (data) => ({
@@ -36,7 +36,7 @@ export const forumApi = createApi({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Thread', id }],
+      invalidatesTags: ['Thread'],
     }),
     deleteThread: builder.mutation({
       query: (id) => ({
@@ -50,14 +50,28 @@ export const forumApi = createApi({
         url: `/threads/${id}/like`,
         method: 'POST',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Thread', id }],
+      invalidatesTags: ['Thread'],
     }),
     unlikeThread: builder.mutation({
       query: (id) => ({
         url: `/threads/${id}/unlike`,
         method: 'POST',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Thread', id }],
+      invalidatesTags: ['Thread'],
+    }),
+    dislikeThread: builder.mutation({
+      query: (id) => ({
+        url: `/threads/${id}/dislike`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Thread'],
+    }),
+    undislikeThread: builder.mutation({
+      query: (id) => ({
+        url: `/threads/${id}/undislike`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Thread'],
     }),
 
     // POSTS
@@ -71,7 +85,7 @@ export const forumApi = createApi({
     }),
     getPost: builder.query({
       query: (id) => `/posts/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Post', id }],
+      providesTags: ['Post'],
     }),
     createPost: builder.mutation({
       query: ({ threadId, text }) => ({
@@ -87,7 +101,7 @@ export const forumApi = createApi({
         method: 'PUT',
         body: { text },
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Post', id }],
+      invalidatesTags: ['Post'],
     }),
     deletePost: builder.mutation({
       query: (id) => ({
@@ -101,14 +115,28 @@ export const forumApi = createApi({
         url: `/posts/${id}/like`,
         method: 'POST',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Post', id }],
+      invalidatesTags: ['Post'],
     }),
     unlikePost: builder.mutation({
       query: (id) => ({
         url: `/posts/${id}/unlike`,
         method: 'POST',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Post', id }],
+      invalidatesTags: ['Post'],
+    }),
+    dislikePost: builder.mutation({
+      query: (id) => ({
+        url: `/posts/${id}/dislike`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Post'],
+    }),
+    undislikePost: builder.mutation({
+      query: (id) => ({
+        url: `/posts/${id}/undislike`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Post'],
     }),
   }),
 });
@@ -122,6 +150,8 @@ export const {
   useDeleteThreadMutation,
   useLikeThreadMutation,
   useUnlikeThreadMutation,
+  useDislikeThreadMutation,
+  useUndislikeThreadMutation,
 
   useGetPostsForThreadQuery,
   useGetUserPostsQuery,
@@ -131,4 +161,6 @@ export const {
   useDeletePostMutation,
   useLikePostMutation,
   useUnlikePostMutation,
+  useDislikePostMutation,
+  useUndislikePostMutation,
 } = forumApi;

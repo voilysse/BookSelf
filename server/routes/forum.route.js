@@ -114,6 +114,9 @@ router.post("/threads/:id/like", auth, async (req, res) => {
     if (thread.likes.includes(req.user.userId))
       return res.status(400).json({ message: "Thread is already liked." });
 
+    if (thread.dislikes.includes(req.user.userId))
+      await thread.updateOne({ $pull: { dislikes: req.user.userId } });
+
     await thread.updateOne({ $push: { likes: req.user.userId } });
 
     res.status(200).json({ message: "Thread liked." });
@@ -135,6 +138,46 @@ router.post("/threads/:id/unlike", auth, async (req, res) => {
     await thread.updateOne({ $pull: { likes: req.user.userId } });
 
     res.status(200).json({ message: "Thread unliked." });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// dislike
+router.post("/threads/:id/dislike", auth, async (req, res) => {
+  try {
+    const thread = await Thread.findById(req.params.id);
+
+    if (req.user.userId === thread.user.toString())
+      return res.status(400).json({ message: "Can't dislike your own thread." });
+
+    if (thread.dislikes.includes(req.user.userId))
+      return res.status(400).json({ message: "Thread is already liked." });
+
+    if (thread.likes.includes(req.user.userId))
+      await thread.updateOne({ $pull: { likes: req.user.userId } });
+
+    await thread.updateOne({ $push: { dislikes: req.user.userId } });
+
+    res.status(200).json({ message: "Thread liked." });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// undislike
+router.post("/threads/:id/unlike", auth, async (req, res) => {
+  try {
+    const thread = await Thread.findById(req.params.id);
+
+    if (req.user.userId === thread.user.toString())
+      return res.status(400).json({ message: "Can't dislike your own thread." });
+    if (!thread.dislikes.includes(req.user.userId))
+      return res.status(400).json({ message: "Thread is already undisliked." });
+
+    await thread.updateOne({ $pull: { dislikes: req.user.userId } });
+
+    res.status(200).json({ message: "Thread undisliked." });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -253,6 +296,9 @@ router.post("/posts/:id/like", auth, async (req, res) => {
     if (post.likes.includes(req.user.userId))
       return res.status(400).json({ message: "Post is already liked." });
 
+    if (post.dislikes.includes(req.user.userId))
+      await post.updateOne({ $pull: { dislikes: req.user.userId } });
+
     await post.updateOne({ $push: { likes: req.user.userId } });
 
     res.status(200).json({ message: "Post liked." });
@@ -273,6 +319,47 @@ router.post("/posts/:id/unlike", auth, async (req, res) => {
       return res.status(400).json({ message: "Post is already unliked." });
 
     await post.updateOne({ $pull: { likes: req.user.userId } });
+
+    res.status(200).json({ message: "Post unliked." });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// dislike
+router.post("/posts/:id/dislike", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (req.user.userId === post.user.toString())
+      return res.status(400).json({ message: "Can't dislike your own posts." });
+
+    if (post.dislikes.includes(req.user.userId))
+      return res.status(400).json({ message: "Post is already disliked." });
+
+     if (post.likes.includes(req.user.userId))
+      await post.updateOne({ $pull: { likes: req.user.userId } });
+
+    await post.updateOne({ $push: { dislikes: req.user.userId } });
+
+    res.status(200).json({ message: "Post liked." });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// undislike
+router.post("/posts/:id/undislike", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (req.user.userId === post.user.toString())
+      return res.status(400).json({ message: "Can't like your own posts." });
+
+    if (!post.dislikes.includes(req.user.userId))
+      return res.status(400).json({ message: "Post is already unliked." });
+
+    await post.updateOne({ $pull: { dislikes: req.user.userId } });
 
     res.status(200).json({ message: "Post unliked." });
   } catch (err) {

@@ -1,30 +1,30 @@
-import React from "react";
 import { useParams } from "react-router-dom";
-import { useGetThreadQuery } from "../../features/forumApi";
-import PostCard from "./PostCard";
+import { useGetBookQuery } from "../../features/bookApi";
+import { Link } from "react-router-dom";
+import ForumThread from "./ForumThread";
+import { useGetAllThreadsQuery } from "../../features/forumApi";
+import ForumCard from "./ForumCard";
 
-const ForumPage = () => {
-  const { id } = useParams();
-  const { data, isLoading, error } = useGetThreadQuery(id);
-  if (isLoading) return <p>Loading...</p>;
-  if (error || !data?.thread) return <p>Forum not found</p>;
-
-  return (
-    <div>
-      <h2>{data.thread.title}</h2>
-      <p>{data.thread.text}</p>
-      <p>By: {data.thread.user?.username}</p>
-
-      <h3>Replies</h3>
-      {data.thread.replies?.length === 0 ? (
-        <p>No replies yet.</p>
-      ) : (
-        data.posts.map((p) => <PostCard key={p._id} post={p} />)
-
-      )}
-
-    </div>
-  );
+const formatDate = (dateString) => {
+  if (!dateString) return '—';
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(date);
 };
 
-export default ForumPage;
+export default function ForumPage() {
+  const { data, isLoading } = useGetAllThreadsQuery();
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-6 max-w-7xl mx-auto">
+        <div>
+          <ForumCard thread={data.thread._id} />
+        </div>
+    </div>
+  );
+}
+
