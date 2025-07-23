@@ -34,7 +34,7 @@ router.post("/register", async (req, res) => {
     });
 
     // Create default shelves
-    const defaultShelfNames = ["Read", "Currently Reading", "Want to Read"];
+    const defaultShelfNames = ["Read", "Currently Reading", "Want to Read", "Favourites"];
     const shelfPromises = defaultShelfNames.map((name) =>
       new Shelf({ name, user: newUser._id, default: true }).save()
     );

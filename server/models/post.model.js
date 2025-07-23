@@ -24,6 +24,10 @@ const PostSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
+    dislikes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
   });
   
   module.exports = mongoose.model('Post', PostSchema);

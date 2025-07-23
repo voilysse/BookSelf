@@ -4,11 +4,13 @@ import { Link } from "react-router-dom";
 import StarRating from "./StarRating";
 import BookComments from "./BookComments";
 import { useGetBookReviewsQuery } from "../../features/bookApi";
+import { useAddBookToShelfMutation, useRemoveBookFromShelfMutation, useGetUserShelvesByNameQuery, useGetUserShelvesQuery } from "../../features/shelfApi";
 import { ReactComponent as ArrowDown } from "../assets/arrow-down.png";
 import { FaChevronDown } from "react-icons/fa";
 import { FiHeart } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const formatDate = (dateString) => {
   if (!dateString) return "—";
@@ -32,11 +34,10 @@ const MenuItem = ({ item, activeItem, setActiveItem, setActiveMenu }) => {
         }
         setActiveMenu(false);
       }}
-      className={`${
-        item === activeItem
-          ? "bg-rat_base text-rat_darkest"
-          : "hover:bg-rat_light"
-      } px-3 py-1 rounded-md text-rat_dark
+      className={`${item === activeItem
+        ? "bg-rat_base text-rat_darkest"
+        : "hover:bg-rat_light"
+        } px-3 py-1 rounded-md text-rat_dark
         hover:text-rat_darkest 
        duration-200 cursor-pointer`}
     >
@@ -55,15 +56,13 @@ const DropdownMenu = ({ itemInfo, activeItem, setActiveItem }) => {
 
   return (
     <div
-      className={`${
-        activeMenu
-          ? "rounded-br-none rounded-bl-none"
-          : "rounded-br-md rounded-bl-md"
-      } ${
-        activeItem
+      className={`${activeMenu
+        ? "rounded-br-none rounded-bl-none"
+        : "rounded-br-md rounded-bl-md"
+        } ${activeItem
           ? "text-white border-rat_darkest bg-rat_dark"
           : "text-rat_dark border-rat_dark"
-      } rounded-tl-md border border-solid rounded-tr-md p-2 w-full flex justify-between items-center relative duration-200`}
+        } rounded-tl-md border border-solid rounded-tr-md p-2 w-full flex justify-between items-center relative duration-200`}
     >
       {activeItem === null ? (
         <p className="text-rat_dark">Add to shelf</p>
@@ -83,9 +82,8 @@ const DropdownMenu = ({ itemInfo, activeItem, setActiveItem }) => {
 
       {/* menu */}
       <div
-        className={`${
-          activeMenu ? "top-full" : "top-1/2 opacity-0 pointer-events-none"
-        } w-full border-2 border-solid border-rat_dark bg-white absolute left-0 duration-200 rounded-bl-md rounded-br-md`}
+        className={`${activeMenu ? "top-full" : "top-1/2 opacity-0 pointer-events-none"
+          } w-full border-2 border-solid border-rat_dark bg-white absolute left-0 duration-200 rounded-bl-md rounded-br-md`}
       >
         <ul className="p-1">
           {itemInfo.map((item, index) => {
@@ -106,28 +104,83 @@ const DropdownMenu = ({ itemInfo, activeItem, setActiveItem }) => {
 };
 
 const ShelvesButtons = () => {
-  const shelves = ["Want to read", "Reading", "To be read"];
-  const handleFavorite = () => {
-    setLiked(!liked);
-    {
-      /*ADD OR REMOVE FROM FAVORITES*/
-    }
-  };
-  const handleAdd = () => {
-    {
-      /*ADD OR REMOVE FROM SHELF*/
-    }
-  };
+  const { id: bookId } = useParams();
+  const { user } = useSelector((state) => state.auth);
+  const { data: shelvesRead } = useGetUserShelvesByNameQuery("Read");
+  const { data: shelvesReading } = useGetUserShelvesByNameQuery("Currently Reading");
+  const { data: shelvesTbr } = useGetUserShelvesByNameQuery("Want to Read");
+  const { data: shelvesFave } = useGetUserShelvesByNameQuery("Favourites");
+
+  const [addBookToShelf] = useAddBookToShelfMutation();
+  const [removeBookFromShelf] = useRemoveBookFromShelfMutation();
+
   const [liked, setLiked] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
-  useEffect(() => handleAdd(), [activeItem]);
+
+  const shelves = ["Read", "Reading", "To be read"];
+
+  useEffect(() => {
+    if (!bookId) return;
+    if (shelvesFave?.shelf?.books?.some(book => book._id === bookId)) {
+      setLiked(true);
+    } else {
+      setLiked(false);
+    }
+
+    if (shelvesRead?.shelf?.books?.some(book => book._id === bookId)) {
+      setActiveItem("Read");
+    } else if (shelvesReading?.shelf?.books?.some(book => book._id === bookId)) {
+      setActiveItem("Currently Reading");
+    } else if (shelvesTbr?.shelf?.books?.some(book => book._id === bookId)) {
+      setActiveItem("Want to Read");
+    } else {
+      setActiveItem(null);
+    }
+  }, [bookId, shelvesRead, shelvesReading, shelvesTbr, shelvesFave]);
+
+  const handleFavorite = async () => {
+    const shelfId = shelvesFave?.shelf?._id;
+    try {
+      if (liked) {
+        await removeBookFromShelf({ shelfId, bookId });
+      } else {
+        await addBookToShelf({ shelfId, bookId });
+      }
+      setLiked(!liked);
+    } catch (err) {
+      console.error("Error updating favorites:", err);
+    }
+  }; useEffect(() => {
+    const checkBookShelves = async () => {
+      try {
+        const bookInShelf = (shelf) => shelf?.shelf?.books?.some(b => b._id === bookId);
+
+        if (bookInShelf(shelvesFave)) {
+          setLiked(true);
+        }
+
+        if (bookInShelf(shelvesRead)) {
+          setActiveItem("Read");
+        } else if (bookInShelf(shelvesReading)) {
+          setActiveItem("Currently Reading");
+        } else if (bookInShelf(shelvesTbr)) {
+          setActiveItem("Want to Read");
+        }
+      } catch (error) {
+        console.error("Error checking shelves:", error);
+      }
+    };
+
+    checkBookShelves();
+  }, [shelvesRead, shelvesReading, shelvesTbr, shelvesFave, bookId]);
+
+
   return (
     <div className="w-[300px] h-10 mt-4 flex gap-3 justify-center items-center">
       <button
         onClick={() => handleFavorite()}
-        className={`${
-          liked ? "bg-rat_darkest" : "bg-rat_light hover:bg-rat_base"
-        } flex h-full w-12 justify-center 
+        className={`${liked ? "bg-rat_darkest" : "bg-rat_light hover:bg-rat_base"
+          } flex h-full w-12 justify-center 
       items-center  text-lg pt-1 px-2 
       rounded-md  text-white`}
       >
@@ -152,7 +205,7 @@ export default function BookPage() {
   const avgRating =
     reviewData?.reviews?.length > 0
       ? reviewData.reviews.reduce((sum, r) => sum + r.rating, 0) /
-        reviewData.reviews.length
+      reviewData.reviews.length
       : 0;
 
   const reviewCount = reviewData?.reviews?.length || 0;
@@ -185,11 +238,13 @@ export default function BookPage() {
 
       {/* Right column */}
       <div className="md:col-span-2 space-y-6 px-10">
-        <div className="text-gray-800 font-sans mt-4">
-          <h1 className="text-4xl font-extrabold leading-tight tracking-tight">
-            {data.book.title}
-          </h1>
-
+        <div className="text-gray-800 font-sans ">
+          <div className="flex justify-between">
+            <h1 className="text-4xl font-extrabold leading-tight tracking-tight mt-4">
+              {data.book.title}
+            </h1>
+            <ShelvesButtons />
+          </div>
           <div className="text-lg  text-gray-600 mt-3 flex flex-wrap items-center gap-2">
             <span className="italic">by</span>
             {data.book.author.map((a) => (
@@ -212,7 +267,6 @@ export default function BookPage() {
               <p className="text-md text-gray-500">({reviewCount} ratings)</p>
             </div>
           </div>
-          <ShelvesButtons />
           <p className="mt-6 text-base leading-relaxed text-gray-700">
             {data.book.summary}
           </p>
@@ -234,7 +288,7 @@ export default function BookPage() {
             </div>
 
             <div className="flex justify-between items-start mt-2 w-full">
-              <span className="uppercase font-semibold text-gray-500">
+              <span className="uppercase font-semibold text-rat_base">
                 Genre
               </span>
               <div className="flex flex-wrap justify-end gap-2 max-w-xs">

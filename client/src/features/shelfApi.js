@@ -14,6 +14,12 @@ export const shelfApi = createApi({
     getShelf: builder.query({
       query: (shelfId) => `/${shelfId}`,
     }),
+    getUserShelvesByName: builder.query({
+      query: (shelfName) => ({
+        url: `/user/${shelfName}`,
+        method: "GET",
+      }),
+    }),
     createShelf: builder.mutation({
       query: (shelfData) => ({
         url: `/create`,
@@ -54,6 +60,7 @@ export const shelfApi = createApi({
 export const {
   useGetUserShelvesQuery,
   useGetShelfQuery,
+  useGetUserShelvesByNameQuery,
   useCreateShelfMutation,
   useUpdateShelfMutation,
   useDeleteShelfMutation,
