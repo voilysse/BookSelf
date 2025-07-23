@@ -21,7 +21,7 @@ function Login() {
   useEffect(() => {
     if (user) {
       toast.success("Logged in :)");
-      navigate('/profile')
+      navigate('/home')
     }
   }, [navigate, user])
 
