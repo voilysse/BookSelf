@@ -203,15 +203,17 @@ const ForumThread = () => {
 
       {/* Replies */}
       <div className="flex flex-col gap-6 max-h-[500px] overflow-y-auto pr-1">
-        
+
         {data.posts && data.posts.length === 0 ? (
           <p className="text-gray-500 italic text-center">The void.</p>
         ) : (
-          data.posts.map((post) => (
-            <div key={post.id} className="rounded-xl border p-4">
-              <ForumPost post={post} />
-            </div>
-          ))
+          data.posts.slice()
+            .sort((a, b) => new Date(a.created) - new Date(b.created))
+            .map((post) => (
+              <div key={post.id} className="rounded-xl border p-4">
+                <ForumPost post={post} />
+              </div>
+            ))
         )}
       </div>
     </div>
