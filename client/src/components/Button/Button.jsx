@@ -1,5 +1,8 @@
-import './Button.css';
-import { useFollowUserMutation, useBlockUserMutation } from "../../features/userApi";
+import "./Button.css";
+import {
+  useFollowUserMutation,
+  useBlockUserMutation,
+} from "../../features/userApi";
 
 export function PrimaryButton({ text = "Primary", onClick, disabled }) {
   return (
@@ -40,7 +43,7 @@ export function FollowButton({ text = "Follow", userId, disabled }) {
 
   return (
     <button
-      className="button button-primary"
+      className=" bg-rat_light p-1 px-3 rounded-md hover:bg-rat_base text-gray-700 hover:text-white"
       onClick={handleClick}
       disabled={disabled}
     >
