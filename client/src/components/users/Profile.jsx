@@ -100,6 +100,26 @@ const Divider = ({}) => {
 };
 
 const Profile = () => {
+  {
+    /*PERSONAL INFORMATION*/
+  }
+  const birthday = new Date("2002-05-13");
+  const lifeMotto = "Always choose happiness 🌸🌼";
+  {
+    /**/
+  }
+
+  {
+    /*ACTIVITY INFORMATION*/
+  }
+  const currentCover =
+    "https://upload.wikimedia.org/wikipedia/en/c/c4/Eat%2C_Pray%2C_Love_%E2%80%93_Elizabeth_Gilbert%2C_2007.jpg";
+  const currentTitle = "Eat,Pray,Love";
+  const currentAuthor = "Elizabeth Gilbert";
+  {
+    /**/
+  }
+
   const { id } = useParams();
   const { user } = useSelector((state) => state.auth);
   const userId = id || user?._id;
