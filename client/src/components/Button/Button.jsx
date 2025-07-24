@@ -7,7 +7,7 @@ import {
 export function PrimaryButton({ text = "Primary", onClick, disabled }) {
   return (
     <button
-      className="button button-primary"
+      className="bg-rat_base p-1 w-20 rounded-md hover:bg-rat_dark text-white"
       onClick={onClick}
       disabled={disabled}
     >
