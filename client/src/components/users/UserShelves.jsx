@@ -3,6 +3,7 @@ import { FollowButton, BlockButton } from "../Button/Button";
 import { Link } from "react-router-dom";
 import { FaRegBookmark, FaSyncAlt, FaRegCheckCircle } from "react-icons/fa";
 import BookCardLarge from "../books/BookCardLarge";
+import { useState } from "react";
 import { useGetUserShelvesByNameQuery } from "../../features/shelfApi";
 import {
   useGetBookQuery,
@@ -10,6 +11,97 @@ import {
 } from "../../features/bookApi.js";
 import StarRating from "../books/StarRating";
 import { PrimaryButton } from "../Button/Button";
+
+const Activity = () => {
+  const { data: reading, isLoading: readingIsLoading } =
+    useGetUserShelvesByNameQuery("Currently Reading");
+  const { data: read, isLoading: readIsLoading } =
+    useGetUserShelvesByNameQuery("Read");
+  const { data: wantToRead, isLoading: wantToReadIsLoading } =
+    useGetUserShelvesByNameQuery("Want to Read");
+  const { data: favourites, isLoading: favouritesIsLoading } =
+    useGetUserShelvesByNameQuery("Favourites");
+  if (
+    favouritesIsLoading ||
+    readingIsLoading ||
+    readIsLoading ||
+    wantToReadIsLoading
+  )
+    return <p>Loading forums...</p>;
+
+  return (
+    <div className=" w-full mx-auto mt-2 flex justify-center items-center">
+      <div className="flex flex-col w-full h-screen">
+        {/*THE THREE COLUMNS*/}
+        <div className="w-full h-4/5 flex gap-2">
+          {/*Want to read*/}
+          <div className="flex-col items-center rounded-xl f-full flex lg:w-1/3 md:w-1/2 w-full bg-rat_lightest">
+            {/*TITLE*/}
+            <div className="m-2 text-md text-rat_dark border border-solid border-rat_dark w-40 h-8 flex justify-center items-center rounded-[20px]">
+              <FaRegBookmark className="m-1" />
+              Want to read
+            </div>
+            <div className="gap-3 w-full flex flex-col items-center">
+              {" "}
+              {favourites.shelf.books.map((b) => (
+                <BookCardShelfWantToRead book={b} />
+              ))}
+            </div>
+          </div>
+          {/*Reading*/}
+          <div className="hidden flex-col items-center md:flex rounded-xl f-full lg:w-1/3 md:w-1/2 bg-rat_lightest">
+            <div className="m-2 text-md text-rat_dark border border-solid border-rat_dark w-40 h-8 flex justify-center items-center rounded-[20px]">
+              <FaSyncAlt className="m-1" />
+              Reading
+            </div>
+          </div>
+          {/*Read*/}
+          <div className="hidden  flex-col items-center lg:flex rounded-xl f-full lg:w-1/3 bg-rat_lightest">
+            <div className="m-2 text-md text-rat_dark border border-solid border-rat_dark w-40 h-8 flex justify-center items-center rounded-[20px]">
+              <FaRegCheckCircle className="m-1" />
+              Read
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Tabs = ({ id }) => {
+  const tabs = ["Activity", "Favouritves"];
+  const [activeTab, setActiveTab] = useState("About");
+
+  return (
+    <div className="w-2/3 self-center mt-8">
+      {/*Tab Buttons*/}
+      <div className="flex items-center justify-start">
+        {tabs.map((tab) => (
+          <div className="flex flex-col">
+            <button
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+              }}
+              className={`px-4 py-2 text-sm font-medium  
+            ${
+              activeTab === tab
+                ? "text-rat_darkest border-b-4 border-solid border-b-rat_darkest "
+                : "text-rat_light hover:text-rat_base"
+            }`}
+            >
+              {tab}
+            </button>
+          </div>
+        ))}
+      </div>
+      {/*Tab Contents*/}
+      <div className="flex w-full">
+        {activeTab === "Activity" && <Activity />}
+      </div>
+    </div>
+  );
+};
 
 const BookCardShelfWantToRead = ({ book }) => {
   const { data, isLoading } = useGetBookQuery(book._id);
@@ -86,58 +178,11 @@ const BookCardShelfWantToRead = ({ book }) => {
 };
 
 export default function UserShelves() {
-  const { data: reading, isLoading: readingIsLoading } =
-    useGetUserShelvesByNameQuery("Currently Reading");
-  const { data: read, isLoading: readIsLoading } =
-    useGetUserShelvesByNameQuery("Read");
-  const { data: wantToRead, isLoading: wantToReadIsLoading } =
-    useGetUserShelvesByNameQuery("Want to Read");
-  const { data: favourites, isLoading: favouritesIsLoading } =
-    useGetUserShelvesByNameQuery("Favourites");
-  if (
-    favouritesIsLoading ||
-    readingIsLoading ||
-    readIsLoading ||
-    wantToReadIsLoading
-  )
-    return <p>Loading forums...</p>;
-
+  const { id } = useParams();
   return (
-    <div className="mx-auto mt-8 flex justify-center items-center">
-      <div className="flex flex-col w-2/3 h-screen">
-        <h1 className="text-xl text-rat_dark font-bold">Bookshelves</h1>
-        {/*THE THREE COLUMNS*/}
-        <div className="w-full h-4/5 flex gap-2">
-          {/*Want to read*/}
-          <div className="flex-col items-center rounded-xl f-full flex lg:w-1/3 md:w-1/2 w-full bg-rat_lightest">
-            {/*TITLE*/}
-            <div className="m-2 text-md text-rat_dark border border-solid border-rat_dark w-40 h-8 flex justify-center items-center rounded-[20px]">
-              <FaRegBookmark className="m-1" />
-              Want to read
-            </div>
-            <div className="gap-3 w-full flex flex-col items-center">
-              {" "}
-              {favourites.shelf.books.map((b) => (
-                <BookCardShelfWantToRead book={b} />
-              ))}
-            </div>
-          </div>
-          {/*Reading*/}
-          <div className="hidden flex-col items-center md:flex rounded-xl f-full lg:w-1/3 md:w-1/2 bg-rat_lightest">
-            <div className="m-2 text-md text-rat_dark border border-solid border-rat_dark w-40 h-8 flex justify-center items-center rounded-[20px]">
-              <FaSyncAlt className="m-1" />
-              Reading
-            </div>
-          </div>
-          {/*Read*/}
-          <div className="hidden  flex-col items-center lg:flex rounded-xl f-full lg:w-1/3 bg-rat_lightest">
-            <div className="m-2 text-md text-rat_dark border border-solid border-rat_dark w-40 h-8 flex justify-center items-center rounded-[20px]">
-              <FaRegCheckCircle className="m-1" />
-              Read
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="w-full flex justify-center">
+      {" "}
+      <Tabs id={id} />
     </div>
   );
 }
