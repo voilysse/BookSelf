@@ -71,12 +71,12 @@ const BookCardShelfWantToRead = ({ book }) => {
         </div>
       </div>
       {/*Buttons*/}
-      <div className="w-5/6 h-10 self-center flex justify-around items-center  opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button className="flex bg-rat_base p-1 w-24 rounded-md hover:bg-rat_dark text-white">
+      <div className="px-2 w-full h-10 self-center flex justify-end  gap-2 items-center  opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button className="flex bg-white border border-solid border-rat_base p-1 w-24 rounded-md hover:bg-rat_base hover:opacity-75 hover:text-white text-rat_dark">
           <FaSyncAlt className="text-sm m-1" />
           Reading
         </button>
-        <button className="flex bg-rat_base p-1 w-24 rounded-md hover:bg-rat_dark text-white">
+        <button className="flex bg-rat_base opacity-75 p-1 w-24 rounded-md hover:opacity-100 text-white">
           <FaRegCheckCircle className="m-1" />
           Read it
         </button>
