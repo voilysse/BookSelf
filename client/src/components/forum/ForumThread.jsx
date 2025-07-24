@@ -109,7 +109,7 @@ const ForumThread = () => {
         <div className="flex gap-2 max-w-xs">
           {thread.tags.map((g) => (
             <Link
-              to={`/tags/${g.toLowerCase()}`}
+              to={`/forum/?tag=${g}`}
               key={g}
               className="inline-block text-sm font-medium px-3 py-1 rounded-full bg-rat_lightest text-gray-800 hover:bg-rat_base hover:text-white transition"
             >
@@ -120,6 +120,13 @@ const ForumThread = () => {
         <div className="flex justify-between my-4">
           <div>
             <h2 className="text-xl font-semibold text-gray-800">{thread.title}</h2>
+             <Link
+              to={`/forum/?category=${thread.category}`}
+              key={thread.category}
+              className="text-sm font-medium py-1 rounded-full text-rat_base hover:text-rat_darkest"
+            >
+              {thread.category}
+            </Link>
             <div className="flex justify-end gap-2 text-sm text-gray-500 mt-1">
               <Link to={`/users/${thread.user._id}`}>{thread.user?.username}</Link>
               <span>•</span>

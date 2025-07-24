@@ -57,6 +57,8 @@ router.post("/threads", auth, async (req, res) => {
       title: req.body.title,
       user: req.user.userId,
       text: req.body.text,
+      category: req.body.category,
+      tags: req.body.tags
     });
 
     const thread = await newThread.save();

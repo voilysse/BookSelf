@@ -15,10 +15,18 @@ const ThreadSchema = new Schema({
     type: String,
     required: true,
   },
+  category:{
+    type: String,
+    required: true,
+  },
   tags: [{
       type: String
   }],
   created: {
+    type: Date,
+    default: Date.now,
+  },
+  updated: {
     type: Date,
     default: Date.now,
   },

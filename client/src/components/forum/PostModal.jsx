@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { ReactComponent as MyIcon } from "../assets/star-solid.svg";
 
 
-const ReviewModal = ({ isOpen, onClose, onSubmit, threadId }) => {
+const PostModal = ({ isOpen, onClose, onSubmit, threadId }) => {
     const [createPost, { isLoading: isSubmitting }] = useCreatePostMutation();
 
     const [text, setText] = useState("");
@@ -106,4 +106,4 @@ const ReviewModal = ({ isOpen, onClose, onSubmit, threadId }) => {
     );
 };
 
-export default ReviewModal;
+export default PostModal;
