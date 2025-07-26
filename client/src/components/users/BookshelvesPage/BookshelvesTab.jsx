@@ -96,7 +96,7 @@ const ShelfCardBox = ({ shelf }) => {
           </Link>
         </div>
         {/*RIGHT: TITLE*/}
-        <div className="flex flex-col mt-3">
+        <div className="flex flex-col mt-4">
           <Link
             key={shelf._id}
             to={`/shelves/${shelf._id}`}
