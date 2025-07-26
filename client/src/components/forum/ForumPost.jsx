@@ -12,7 +12,7 @@ import {
   useUndislikePostMutation
 } from "../../features/forumApi";
 
-function ForumPost({ post}) {
+function ForumPost({ post }) {
   const n = new Date();
   const [now, setNow] = useState(n);
   const posted = new Date(post.created);
@@ -45,41 +45,35 @@ function ForumPost({ post}) {
 
 
   const { user } = useSelector((state) => state.auth);
-  const [hasLiked, setHasLiked] = useState(post.likes.includes(user?._id));
-  const [hasDisliked, setHasDisliked] = useState(post.dislikes.includes(user?._id));
+
+  const [liked, setLiked] = useState(post.likes.includes(user?._id));
+  const [disliked, setDisliked] = useState(post.dislikes.includes(user?._id));
+  const [likeCount, setLikeCount] = useState(post.likes.length);
+  const [dislikeCount, setDislikeCount] = useState(post.dislikes.length);
 
   const [likePost] = useLikePostMutation();
   const [unlikePost] = useUnlikePostMutation();
   const [dislikePost] = useDislikePostMutation();
   const [undislikePost] = useUndislikePostMutation();
 
-  const [likeCount, setLikeCount] = useState(0);
-   const [dislikeCount, setDislikeCount] = useState(0);
- 
-   useEffect(() => {
-     if (post) {
-       setLikeCount(post.likes.length);
-       setDislikeCount(post.dislikes.length);
-       setHasLiked(post.likes.includes(user._id));
-       setHasDisliked(post.dislikes.includes(user._id));
-     }
-   }, [post, user]);
-    const handleLike = async () => {
+  const handleLike = async () => {
     if (!user) return;
 
     try {
-      if (hasLiked) {
+      setLiked(!liked);
+      if (liked) {
         await unlikePost(post._id);
-        setHasLiked(false);
-        setLikeCount(prev => prev - 1);
-      } else {
-        if (hasDisliked) {
-          await undislikePost(post._id);
-          setHasDisliked(false);
-        }
+        setLikeCount(prev => prev - 1)
+
+      }
+      if (!liked) {
         await likePost(post._id);
-        setHasLiked(true);
-        setLikeCount(prev => prev + 1);
+        setLikeCount(prev => prev + 1)
+      }
+      if (disliked) {
+        await undislikePost(post._id)
+        setDisliked(false);
+        setDislikeCount(prev => prev - 1)
       }
     } catch (err) {
       console.error(err);
@@ -90,19 +84,20 @@ function ForumPost({ post}) {
     if (!user) return;
 
     try {
-      if (hasDisliked) {
+      setDisliked(!disliked);
+      if (disliked) {
         await undislikePost(post._id);
-        setHasDisliked(false);
-        setDislikeCount(prev => prev - 1);
-      } else {
-        if (hasLiked) {
-          await unlikePost(post._id);
-          setHasLiked(false);
-          setLikeCount(prev => prev - 1);
-        }
+        setDislikeCount(prev => prev - 1)
+      }
+      if (!disliked) {
         await dislikePost(post._id);
-        setHasDisliked(true);
-        setDislikeCount(prev => prev + 1);
+        setDislikeCount(prev => prev + 1)
+      }
+
+      if (liked){ 
+        await unlikePost(post._id)
+        setLiked(false);
+        setLikeCount(prev => prev - 1)
       }
     } catch (err) {
       console.error(err);
@@ -145,12 +140,12 @@ function ForumPost({ post}) {
         <div className="flex justify-between text-gray-500 items-center text-sm">
           <div className="flex gap-4 text-gray-500 items-center text-sm">
             {user ? (<button
-                  onClick={handleLike}
-                  className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
-                >
-                  <ThumbsUp className="w-4" />
-                  <span>{likeCount}</span>
-                </button>
+              onClick={handleLike}
+              className={`flex items-center gap-1 transition ${liked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+            >
+              <ThumbsUp className="w-4" />
+              <span>{likeCount}</span>
+            </button>
             ) : (
               <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
                 <ThumbsUp className="w-4" />
@@ -160,12 +155,12 @@ function ForumPost({ post}) {
 
             {user ? (
               <button
-                  onClick={handleDislike}
-                  className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
-                >
-                  <ThumbsDown className="w-4" />
-                  <span>{dislikeCount}</span>
-                </button>
+                onClick={handleDislike}
+                className={`flex items-center gap-1 transition ${disliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+              >
+                <ThumbsDown className="w-4" />
+                <span>{dislikeCount}</span>
+              </button>
             ) : (
               <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
                 <ThumbsDown className="w-4" />

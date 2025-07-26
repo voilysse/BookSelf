@@ -40,47 +40,46 @@ const ForumThread = () => {
 
   const { id } = useParams();
   const { data, isLoading } = useGetThreadQuery(id);
-  const [hasLiked, setHasLiked] = useState(false);
-  const [hasDisliked, setHasDisliked] = useState(false);
+
+  const [liked, setLiked] = useState(false);
+  const [disliked, setDisliked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [dislikeCount, setDislikeCount] = useState(0);
 
   const [likeThread] = useLikeThreadMutation();
   const [unlikeThread] = useUnlikeThreadMutation();
   const [dislikeThread] = useDislikeThreadMutation();
   const [undislikeThread] = useUndislikeThreadMutation();
 
-  const [likeCount, setLikeCount] = useState(0);
-  const [dislikeCount, setDislikeCount] = useState(0);
-
   useEffect(() => {
     if (data?.thread) {
       setLikeCount(data.thread.likes.length);
       setDislikeCount(data.thread.dislikes.length);
-      setHasLiked(data.thread.likes.includes(user._id));
-      setHasDisliked(data.thread.dislikes.includes(user._id));
+      setLiked(data.thread.likes.includes(user._id));
+      setDisliked(data.thread.dislikes.includes(user._id));
     }
   }, [data, user]);
 
   if (isLoading) return <div>Loading...</div>;
 
   const thread = data.thread;
-
-
+  
   const handleLike = async () => {
     if (!user) return;
-
     try {
-      if (hasLiked) {
+      setLiked(!liked);
+      if (liked) {
         await unlikeThread(thread._id);
-        setHasLiked(false);
-        setLikeCount(prev => prev - 1);
-      } else {
-        if (hasDisliked) {
-          await undislikeThread(thread._id);
-          setHasDisliked(false);
-        }
+        setLikeCount(prev => prev - 1)
+      }
+      if (!liked) {
         await likeThread(thread._id);
-        setHasLiked(true);
-        setLikeCount(prev => prev + 1);
+        setLikeCount(prev => prev + 1)
+      }
+      if (disliked) {
+        await undislikeThread(thread._id)
+        setDisliked(false);
+        setDislikeCount(prev => prev - 1)
       }
     } catch (err) {
       console.error(err);
@@ -91,19 +90,20 @@ const ForumThread = () => {
     if (!user) return;
 
     try {
-      if (hasDisliked) {
+      setDisliked(!disliked);
+      if (disliked) {
         await undislikeThread(thread._id);
-        setHasDisliked(false);
-        setDislikeCount(prev => prev - 1);
-      } else {
-        if (hasLiked) {
-          await unlikeThread(thread._id);
-          setHasLiked(false);
-          setLikeCount(prev => prev - 1);
-        }
+        setDislikeCount(prev => prev - 1)
+      }
+      if (!disliked) {
         await dislikeThread(thread._id);
-        setHasDisliked(true);
-        setDislikeCount(prev => prev + 1);
+        setDislikeCount(prev => prev + 1)
+      }
+
+      if (liked){ 
+        await unlikeThread(thread._id)
+        setLiked(false);
+        setLikeCount(prev => prev - 1)
       }
     } catch (err) {
       console.error(err);
@@ -157,7 +157,7 @@ const ForumThread = () => {
               {user ? (
                 <button
                   onClick={handleLike}
-                  className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+                  className={`flex items-center gap-1 transition ${liked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
                 >
                   <ThumbsUp className="w-4" />
                   <span>{likeCount}</span>
@@ -171,7 +171,7 @@ const ForumThread = () => {
               {user ? (
                 <button
                   onClick={handleDislike}
-                  className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
+                  className={`flex items-center gap-1 transition ${disliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
                 >
                   <ThumbsDown className="w-4" />
                   <span>{dislikeCount}</span>

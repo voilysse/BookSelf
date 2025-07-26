@@ -160,7 +160,7 @@ router.post("/threads/:id/dislike", auth, async (req, res) => {
 });
 
 // undislike
-router.post("/threads/:id/unlike", auth, async (req, res) => {
+router.post("/threads/:id/undislike", auth, async (req, res) => {
   try {
     const thread = await Thread.findById(req.params.id);
 
