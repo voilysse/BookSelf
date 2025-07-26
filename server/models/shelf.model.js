@@ -26,7 +26,13 @@ const shelfSchema = new Schema({
     default: {
         type: Boolean,
         default: false
-    }
+    },
+    cover: {
+        type: String,
+    },
+    description: {
+        type: String,
+    },
 })
 
 module.exports = mongoose.model('Shelf', shelfSchema);

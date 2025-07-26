@@ -57,6 +57,8 @@ router.post("/create", auth, async (req, res) => {
       name: req.body.name,
       user: req.user.userId,
       public: req.body.public ?? true,
+      cover: req.body.cover,
+      description: req.body.description,
     });
     const shelf = await newShelf.save();
     await User.findByIdAndUpdate(req.user.userId, {
@@ -84,7 +86,9 @@ router.put("/:id", auth, async (req, res) => {
     }
 
     shelf.name = req.body.name ?? shelf.name;
-    shelf.public = req.body.public ?? shelf.pubic;
+    shelf.public = req.body.public ?? shelf.public;
+    shelf.cover = req.body.cover ?? shelf.cover;
+    shelf.description = req.body.description ?? shelf.description;
 
     await shelf.save();
     res.status(200).json({ msg: "Shelf updated.", shelf: shelf });

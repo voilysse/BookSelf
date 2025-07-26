@@ -64,53 +64,52 @@ function ForumPost({ post}) {
        setHasDisliked(post.dislikes.includes(user._id));
      }
    }, [post, user]);
-  
-   const handleLike = async () => {
-     if (!user || user._id === post.user._id) return;
- 
-     try {
-       if (hasLiked) {
-         await unlikePost(post._id);
-         setHasLiked(false);
-         setLikeCount(prev => prev - 1);
-       } else {
-         if (hasDisliked) {
-           await undislikePost(post._id);
-           setHasDisliked(false);
-         }
-         await likePost(post._id);
-         setHasLiked(true);
-         setLikeCount(prev => prev + 1);
-       }
-     } catch (err) {
-       console.error(err);
-     }
-   };
- 
-   const handleDislike = async () => {
-   if (!user || user._id === post.user._id) return;
- 
-   try {
-     if (hasDisliked) {
-       await undislikePost(post._id);
-       setHasDisliked(false);
-       setDislikeCount(prev => prev - 1);
-     } else {
-       if (hasLiked) {
-         await unlikePost(post._id);
-         setHasLiked(false);
-         setLikeCount(prev => prev - 1); 
-       }
-       await dislikePost(post._id);
-       setHasDisliked(true);
-       setDislikeCount(prev => prev + 1);
-     }
-   } catch (err) {
-     console.error(err);
-   }
- };
+    const handleLike = async () => {
+    if (!user) return;
 
-  
+    try {
+      if (hasLiked) {
+        await unlikePost(post._id);
+        setHasLiked(false);
+        setLikeCount(prev => prev - 1);
+      } else {
+        if (hasDisliked) {
+          await undislikePost(post._id);
+          setHasDisliked(false);
+        }
+        await likePost(post._id);
+        setHasLiked(true);
+        setLikeCount(prev => prev + 1);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDislike = async () => {
+    if (!user) return;
+
+    try {
+      if (hasDisliked) {
+        await undislikePost(post._id);
+        setHasDisliked(false);
+        setDislikeCount(prev => prev - 1);
+      } else {
+        if (hasLiked) {
+          await unlikePost(post._id);
+          setHasLiked(false);
+          setLikeCount(prev => prev - 1);
+        }
+        await dislikePost(post._id);
+        setHasDisliked(true);
+        setDislikeCount(prev => prev + 1);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
   return (
     <div className="flex gap-4 w-ful">
       <div className="flex flex-col items-center relative">
@@ -145,24 +144,13 @@ function ForumPost({ post}) {
 
         <div className="flex justify-between text-gray-500 items-center text-sm">
           <div className="flex gap-4 text-gray-500 items-center text-sm">
-            {user ? (
-              user._id === post.user._id ? (
-                <button
-                  onClick={handleLike}
-                  className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
-                >
-                  <ThumbsUp className="w-4" />
-                  <span>{likeCount}</span>
-                </button>
-              ) : (
-                <button
+            {user ? (<button
                   onClick={handleLike}
                   className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
                 >
                   <ThumbsUp className="w-4" />
                   <span>{likeCount}</span>
                 </button>
-              )
             ) : (
               <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
                 <ThumbsUp className="w-4" />
@@ -170,25 +158,14 @@ function ForumPost({ post}) {
               </div>
             )}
 
-
             {user ? (
-              user._id === post.user._id ? (
-                <button
-                  onClick={handleDislike}
-                  className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
-                >
-                  <ThumbsDown className="w-4" />
-                  <span>{dislikeCount}</span>
-                </button>
-              ) : (
-                <button
+              <button
                   onClick={handleDislike}
                   className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
                 >
                   <ThumbsDown className="w-4" />
                   <span>{dislikeCount}</span>
                 </button>
-              )
             ) : (
               <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
                 <ThumbsDown className="w-4" />

@@ -88,7 +88,7 @@ const ForumThread = () => {
   };
 
   const handleDislike = async () => {
-    if (!user || user._id === thread.user._id) return;
+    if (!user) return;
 
     try {
       if (hasDisliked) {
