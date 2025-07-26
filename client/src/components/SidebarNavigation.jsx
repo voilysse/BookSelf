@@ -4,7 +4,6 @@ import { ReactComponent as HomeIcon } from "../assets/home.svg";
 import { ReactComponent as NotificationsIcon } from "../assets/notifications.svg";
 import { ReactComponent as ShelfIcon } from "../assets/book-shelf.svg";
 import { ReactComponent as GroupIcon } from "../assets/group-solid.svg";
-import { ReactComponent as ForumIcon } from "../assets/forum.svg";
 import { ReactComponent as SettingsIcon } from "../assets/settings.svg";
 import { ReactComponent as LogOutIcon } from "../assets/log-out.svg";
 import { ReactComponent as DownArrowIcon } from "../assets/down-arrow.svg";
@@ -522,7 +521,7 @@ function SidebarNavigation({
       numberVisible: false,
     },
     {
-      icon: ForumIcon,
+      icon: GroupIcon,
       name: "Forum",
       expandable: false,
       expandableList: [],
