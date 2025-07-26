@@ -110,9 +110,6 @@ router.post("/threads/:id/like", auth, async (req, res) => {
   try {
     const thread = await Thread.findById(req.params.id);
 
-    if (req.user.userId === thread.user.toString())
-      return res.status(400).json({ message: "Can't like your own thread." });
-
     if (thread.likes.includes(req.user.userId))
       return res.status(400).json({ message: "Thread is already liked." });
 
@@ -132,8 +129,6 @@ router.post("/threads/:id/unlike", auth, async (req, res) => {
   try {
     const thread = await Thread.findById(req.params.id);
 
-    if (req.user.userId === thread.user.toString())
-      return res.status(400).json({ message: "Can't like your own thread." });
     if (!thread.likes.includes(req.user.userId))
       return res.status(400).json({ message: "Thread is already unliked." });
 
@@ -149,9 +144,6 @@ router.post("/threads/:id/unlike", auth, async (req, res) => {
 router.post("/threads/:id/dislike", auth, async (req, res) => {
   try {
     const thread = await Thread.findById(req.params.id);
-
-    if (req.user.userId === thread.user.toString())
-      return res.status(400).json({ message: "Can't dislike your own thread." });
 
     if (thread.dislikes.includes(req.user.userId))
       return res.status(400).json({ message: "Thread is already liked." });
@@ -172,8 +164,6 @@ router.post("/threads/:id/unlike", auth, async (req, res) => {
   try {
     const thread = await Thread.findById(req.params.id);
 
-    if (req.user.userId === thread.user.toString())
-      return res.status(400).json({ message: "Can't dislike your own thread." });
     if (!thread.dislikes.includes(req.user.userId))
       return res.status(400).json({ message: "Thread is already undisliked." });
 
@@ -292,9 +282,6 @@ router.post("/posts/:id/like", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
-    if (req.user.userId === post.user.toString())
-      return res.status(400).json({ message: "Can't like your own posts." });
-
     if (post.likes.includes(req.user.userId))
       return res.status(400).json({ message: "Post is already liked." });
 
@@ -314,9 +301,6 @@ router.post("/posts/:id/unlike", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
-    if (req.user.userId === post.user.toString())
-      return res.status(400).json({ message: "Can't like your own posts." });
-
     if (!post.likes.includes(req.user.userId))
       return res.status(400).json({ message: "Post is already unliked." });
 
@@ -332,9 +316,6 @@ router.post("/posts/:id/unlike", auth, async (req, res) => {
 router.post("/posts/:id/dislike", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-
-    if (req.user.userId === post.user.toString())
-      return res.status(400).json({ message: "Can't dislike your own posts." });
 
     if (post.dislikes.includes(req.user.userId))
       return res.status(400).json({ message: "Post is already disliked." });
@@ -354,9 +335,6 @@ router.post("/posts/:id/dislike", auth, async (req, res) => {
 router.post("/posts/:id/undislike", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-
-    if (req.user.userId === post.user.toString())
-      return res.status(400).json({ message: "Can't like your own posts." });
 
     if (!post.dislikes.includes(req.user.userId))
       return res.status(400).json({ message: "Post is already unliked." });

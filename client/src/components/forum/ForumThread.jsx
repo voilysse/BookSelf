@@ -7,7 +7,7 @@ import PostModal from "./PostModal"
 import { ReactComponent as ThumbsUp } from "../assets/thumbs-up-solid.svg";
 import { ReactComponent as ThumbsDown } from "../assets/thumbs-down-solid.svg";
 import { useSelector } from "react-redux";
-
+import { useNavigate } from "react-router-dom";
 import {
   useGetThreadQuery,
   useLikeThreadMutation,
@@ -15,6 +15,12 @@ import {
   useDislikeThreadMutation,
   useUndislikeThreadMutation
 } from "../../features/forumApi";
+
+
+import ForumSideMenu from "./ForumSideMenu.jsx";
+
+const tags = ["Question", "Review", "Off-Topic", "Discussion"];
+const categories = ["General", "Announcements", "Help", "Discussion", "Reviews", "Off-Topic"];
 
 const formatDate = (dateString) => {
   if (!dateString) return "—";
@@ -27,8 +33,10 @@ const formatDate = (dateString) => {
 };
 
 const ForumThread = () => {
-  const { user } = useSelector((state) => state.auth);
   const [modalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const user = useSelector((state) => state.auth.user);
 
   const { id } = useParams();
   const { data, isLoading } = useGetThreadQuery(id);
@@ -58,7 +66,7 @@ const ForumThread = () => {
 
 
   const handleLike = async () => {
-    if (!user || user._id === thread.user._id) return;
+    if (!user) return;
 
     try {
       if (hasLiked) {
@@ -103,51 +111,50 @@ const ForumThread = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+
+    <div className="p-8 mx-20 grid grid-cols-6 gap-6">
+
+      {/* Side menu */}
+      <div className="col-span-1">
+        <ForumSideMenu categories={categories} tags={tags} />
+      </div>
+
       {/* thread Card */}
-      <div className="p-6">
-        <div className="flex gap-2 max-w-xs">
-          {thread.tags.map((g) => (
-            <Link
-              to={`/forum/?tag=${g}`}
-              key={g}
-              className="inline-block text-sm font-medium px-3 py-1 rounded-full bg-rat_lightest text-gray-800 hover:bg-rat_base hover:text-white transition"
-            >
-              {g}
-            </Link>
-          ))}
-        </div>
-        <div className="flex justify-between my-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-800">{thread.title}</h2>
-             <Link
-              to={`/forum/?category=${thread.category}`}
-              key={thread.category}
-              className="text-sm font-medium py-1 rounded-full text-rat_base hover:text-rat_darkest"
-            >
-              {thread.category}
-            </Link>
-            <div className="flex justify-end gap-2 text-sm text-gray-500 mt-1">
-              <Link to={`/users/${thread.user._id}`}>{thread.user?.username}</Link>
-              <span>•</span>
-              <span>{formatDate(thread.created)}</span>
+      <div className="col-span-4">
+        <div className="">
+          <div className="flex gap-2">
+            {thread.tags.map((g) => (
+              <Link
+                to={`/forum/?tag=${g}`}
+                key={g}
+                className="inline-block text-sm font-medium px-3 py-1 rounded-full bg-rat_lightest text-gray-800 hover:bg-rat_base hover:text-white transition"
+              >
+                {g}
+              </Link>
+            ))}
+          </div>
+          <div className="flex justify-between my-4">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">{thread.title}</h2>
+              <Link
+                to={`/forum/?category=${thread.category}`}
+                key={thread.category}
+                className="text-sm font-medium py-1 rounded-full text-rat_base hover:text-rat_darkest"
+              >
+                {thread.category}
+              </Link>
+              <div className="flex justify-end gap-2 text-sm text-gray-500 mt-1">
+                <Link to={`/users/${thread.user._id}`}>{thread.user?.username}</Link>
+                <span>•</span>
+                <span>{formatDate(thread.created)}</span>
+              </div>
             </div>
           </div>
-        </div>
-        <p className="text-gray-700 mt-2 leading-relaxed">{thread.text}</p>
+          <p className="text-gray-700 mt-2 leading-relaxed">{thread.text}</p>
 
-        <div className="flex justify-between text-gray-500 items-center text-sm mt-4">
-          <div className="flex gap-4 text-gray-500 items-center text-sm">
-            {user ? (
-              user._id === thread.user._id ? (
-                <button
-                  onClick={handleLike}
-                  className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
-                >
-                  <ThumbsUp className="w-4" />
-                  <span>{likeCount}</span>
-                </button>
-              ) : (
+          <div className="flex justify-between text-gray-500 items-center text-sm mt-4">
+            <div className="flex gap-4 text-gray-500 items-center text-sm">
+              {user ? (
                 <button
                   onClick={handleLike}
                   className={`flex items-center gap-1 transition ${hasLiked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
@@ -155,23 +162,13 @@ const ForumThread = () => {
                   <ThumbsUp className="w-4" />
                   <span>{likeCount}</span>
                 </button>
-              )
-            ) : (
-              <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
-                <ThumbsUp className="w-4" />
-                <span>{likeCount}</span>
-              </div>
-            )}
-            {user ? (
-              user._id === thread.user._id ? (
-                <button
-                  onClick={handleDislike}
-                  className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:cursor-default"}`}
-                >
-                  <ThumbsDown className="w-4" />
-                  <span>{dislikeCount}</span>
-                </button>
               ) : (
+                <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
+                  <ThumbsUp className="w-4" />
+                  <span>{likeCount}</span>
+                </div>
+              )}
+              {user ? (
                 <button
                   onClick={handleDislike}
                   className={`flex items-center gap-1 transition ${hasDisliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
@@ -180,48 +177,54 @@ const ForumThread = () => {
                   <span>{dislikeCount}</span>
                 </button>
               )
-            ) : (
-              <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
-                <ThumbsDown className="w-4" />
-                <span>{dislikeCount}</span>
-              </div>
-            )}
+                : (
+                  <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
+                    <ThumbsDown className="w-4" />
+                    <span>{dislikeCount}</span>
+                  </div>
+                )}
+            </div>
+
+            <button
+              onClick={() => setModalOpen(true)}
+              className="px-4 py-2 bg-rat_base text-white rounded-lg hover:bg-opacity-90"
+            >
+              Reply
+            </button>
+
+            <PostModal
+              isOpen={modalOpen}
+              onClose={() => setModalOpen(false)}
+              threadId={thread}
+            />
           </div>
+        </div>
 
-          <button
-            onClick={() => setModalOpen(true)}
-            className="px-4 py-2 bg-rat_base text-white rounded-lg hover:bg-opacity-90"
-          >
-            Reply
-          </button>
+        {/* Divider */}
+        <div className="flex items-center my-2">
+          <hr className="flex-grow h-0.5 border-t-0 bg-rat_lightest" />
+        </div>
 
-          <PostModal
-            isOpen={modalOpen}
-            onClose={() => setModalOpen(false)}
-            threadId={thread}
-          />
+        {/* Replies */}
+        <div className="flex flex-col gap-6 ">
+
+          {data.posts && data.posts.length === 0 ? (
+            <p className="text-gray-500 italic text-center">The void.</p>
+          ) : (
+            data.posts.slice()
+              .sort((a, b) => new Date(a.created) - new Date(b.created))
+              .map((post) => (
+                <div key={post.id} className="rounded-xl border p-4">
+                  <ForumPost post={post} />
+                </div>
+              ))
+          )}
         </div>
       </div>
 
-      {/* Divider */}
-      <div className="flex items-center my-2">
-        <hr className="flex-grow h-0.5 border-t-0 bg-rat_lightest" />
-      </div>
-
-      {/* Replies */}
-      <div className="flex flex-col gap-6 max-h-[500px] overflow-y-auto pr-1">
-
-        {data.posts && data.posts.length === 0 ? (
-          <p className="text-gray-500 italic text-center">The void.</p>
-        ) : (
-          data.posts.slice()
-            .sort((a, b) => new Date(a.created) - new Date(b.created))
-            .map((post) => (
-              <div key={post.id} className="rounded-xl border p-4">
-                <ForumPost post={post} />
-              </div>
-            ))
-        )}
+      {/* Timeline */}
+      <div className="col-span-1">
+        <p>A timeline i promise</p>
       </div>
     </div>
   );

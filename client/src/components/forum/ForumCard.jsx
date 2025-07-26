@@ -53,38 +53,46 @@ const ForumCard = ({ thread }) => {
           {thread.title}
 
           <div className="flex gap-2">
-            <Link to={`/forum?category=${thread.category}`}  className="text-sm mt-2.5 text-rat_base hover:text-rat_light">{thread.category} </Link>
-            <span className="text-sm mt-2.5 text-rat_base">•</span>
+            <Link to={`/forum?category=${thread.category}`} className="text-sm mt-2.5 text-rat_base hover:text-rat_light">{thread.category} </Link>
             {thread.tags && thread.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {thread.tags.map((tag, index) => (
-                  <Link to={`/forum?tag=${tag}`}
-                    key={index}
-                    className="bg-rat_base text-white text-xs font-medium px-2 py-1 rounded-xl hover:bg-rat_lightest hover:text-rat_darkest"
-                  >
-                    {tag}
-                  </Link>
-                ))}
-              </div>
+              <>
+                <span className="text-sm mt-2.5 text-rat_base">•</span>
+
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {thread.tags.map((tag, index) => (
+                    <Link to={`/forum?tag=${tag}`}
+                      key={index}
+                      className="bg-rat_base text-white text-xs font-medium px-2 py-1 rounded-xl hover:bg-rat_lightest hover:text-rat_darkest"
+                    >
+                      {tag}
+                    </Link>
+                  ))}
+                </div>
+              </>
             )}
           </div>
 
 
         </div>
 
-        <div className="flex justify-end gap-10 text-sm text-gray-700">
-          <Link to={`/users/${thread.user._id}`}>
-            <img
-              src={thread.user.img}
-              alt={thread.user.username}
-              className="w-10 h-10 rounded-full object-cover"
-            />
-          </Link>
-          <span className="mt-3">{replyCount}</span>
-          <span className="mt-3">
-            {latestPost ? time : "No activity"}
-          </span>
+        <div className="flex items-center capitalize gap-6 justify-end text-sm text-rat_base">
+          <div className="w-16 flex justify-center items-center">
+            <Link to={`/users/${thread.user._id}`}>
+              <img
+                src={thread.user.img}
+                alt={thread.user.username}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            </Link>
+          </div>
+          <div className="w-16 flex justify-center items-center">
+            <span>{replyCount}</span>
+          </div>
+          <div className="w-16 flex justify-center items-center text-center">
+            <span>{latestPost ? time : "No activity"}</span>
+          </div>
         </div>
+
       </div>
     </Link>
 
