@@ -18,11 +18,14 @@ import AuthorPage from "./components/books/AuthorPage";
 import Forum from "./components/forum/Forum";
 import ForumThread from "./components/forum/ForumThread";
 import GroupPage from "./components/groups/GroupPage";
+import BookshelfPage from "./components/users/BookshelvesPage/BookshelfPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import "@fontsource/rubik"; 
 import "@fontsource/rubik/500.css";
+import BookshelfEdit from "./components/users/BookshelvesPage/BookshelfEdit";
+import BookshelvesTab from "./components/users/BookshelvesPage/BookshelvesTab";
 
 function App() {
   return (
@@ -42,7 +45,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/browse" element={<Browse />} />
-        <Route path="/shelves" element={<UserShelves />} />
+        <Route path="/shelves" element={<UserShelves />}/>
+        <Route path="/shelves/:id" element={<BookshelfPage/>} />
+        <Route path="/shelves/:name/edit" element={<BookshelfEdit/>} />
         <Route path="/community" element={<Community />} />
         <Route path="/users" element={<UserList />} />
         <Route path="/users/:id" element={<Profile />} />
