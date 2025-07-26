@@ -139,7 +139,7 @@ const Favourites = () => {
 };
 
 const Tabs = ({ id }) => {
-  const tabs = ["Board", "Favourites", " Bookshelves"];
+  const tabs = ["Board", "Favourites", "Bookshelves"];
   const [activeTab, setActiveTab] = useState("Board");
 
   return (
