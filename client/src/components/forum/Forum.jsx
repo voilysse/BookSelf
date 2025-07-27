@@ -13,6 +13,7 @@ const categories = ["General", "Announcements", "Help", "Discussion", "Reviews",
 
 export default function Forum() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ export default function Forum() {
     setSelectedCategory(null);
     setSelectedTag(null);
     setSearchParams({});
+    setSearchTerm("");
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -50,21 +52,34 @@ export default function Forum() {
   const filteredThreads = data.threads.filter((thread) => {
     const categoryMatch = selectedCategory ? thread.category === selectedCategory : true;
     const tagMatch = selectedTag ? thread.tags.includes(selectedTag) : true;
-    return categoryMatch && tagMatch;
+    const titleMatch = thread.title.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return categoryMatch && tagMatch && titleMatch;
   });
+
 
   return (
     <div className="p-8 mx-20 grid grid-cols-6 gap-6">
 
       {/* Side menu */}
       <div className="col-span-1">
-        <ForumSideMenu categories={categories} tags={tags}/>
+        <ForumSideMenu categories={categories} tags={tags} />
       </div>
 
       <div className="col-span-5">
         <div className="sticky top-0 bg-white z-10 pb-2">
           <div className="flex justify-between">
             <div className="flex justify-end gap-4">
+              <div className="w-[300px] h-10 mt-4 flex items-center">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search by title..."
+                  className="w-full px-3 py-2 border border-solid rounded-tr-md p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-rat_base"
+                />
+              </div>
+
               <div className="w-[200px] h-10 mt-4 flex gap-3 justify-center items-center">
                 <DropdownMenu
                   itemInfo={categories}

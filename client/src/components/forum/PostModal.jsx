@@ -4,10 +4,6 @@ import { ReactComponent as BoldIcon } from "../assets/bold-solid.svg";
 import { ReactComponent as ItalicIcon } from "../assets/italic-solid.svg";
 import { ReactComponent as UnderlineIcon } from "../assets/underline-solid.svg";
 import { useCreatePostMutation } from "../../features/forumApi.js";
-import { useSelector } from "react-redux";
-
-import { ReactComponent as MyIcon } from "../assets/star-solid.svg";
-
 
 const PostModal = ({ isOpen, onClose, onSubmit, threadId }) => {
     const [createPost, { isLoading: isSubmitting }] = useCreatePostMutation();

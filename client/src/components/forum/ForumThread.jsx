@@ -1,23 +1,20 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import ForumPost from "./ForumPost";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import PostModal from "./PostModal"
-import { ReactComponent as ThumbsUp } from "../assets/thumbs-up-solid.svg";
-import { ReactComponent as ThumbsDown } from "../assets/thumbs-down-solid.svg";
+import { useState, useRef, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import ForumPost from "./ForumPost";
+import ForumSideMenu from "./ForumSideMenu";
+import PostModal from "./PostModal";
+import LikeDislikeButtons from "./LikeDislikeButtons";
+import { useLikeDislike } from "../hooks/useLikeDislike";
+import { Element, scroller } from "react-scroll";
+
 import {
   useGetThreadQuery,
   useLikeThreadMutation,
   useUnlikeThreadMutation,
   useDislikeThreadMutation,
-  useUndislikeThreadMutation
+  useUndislikeThreadMutation,
 } from "../../features/forumApi";
-
-
-import ForumSideMenu from "./ForumSideMenu.jsx";
 
 const tags = ["Question", "Review", "Off-Topic", "Discussion"];
 const categories = ["General", "Announcements", "Help", "Discussion", "Reviews", "Off-Topic"];
@@ -33,95 +30,92 @@ const formatDate = (dateString) => {
 };
 
 const ForumThread = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const user = useSelector((state) => state.auth.user);
-
   const { id } = useParams();
   const { data, isLoading } = useGetThreadQuery(id);
+  const user = useSelector((state) => state.auth.user);
 
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-  const [dislikeCount, setDislikeCount] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const timelineRef = useRef(null);
 
   const [likeThread] = useLikeThreadMutation();
   const [unlikeThread] = useUnlikeThreadMutation();
   const [dislikeThread] = useDislikeThreadMutation();
   const [undislikeThread] = useUndislikeThreadMutation();
 
+  const thread = data?.thread;
+
+  const {
+    liked,
+    disliked,
+    likeCount,
+    dislikeCount,
+    handleLike,
+    handleDislike,
+  } = useLikeDislike({
+    item: thread,
+    likeMutation: likeThread,
+    unlikeMutation: unlikeThread,
+    dislikeMutation: dislikeThread,
+    undislikeMutation: undislikeThread,
+  });
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   useEffect(() => {
-    if (data?.thread) {
-      setLikeCount(data.thread.likes.length);
-      setDislikeCount(data.thread.dislikes.length);
-      setLiked(data.thread.likes.includes(user._id));
-      setDisliked(data.thread.dislikes.includes(user._id));
-    }
-  }, [data, user]);
+    if (!data?.posts || data.posts.length === 0) return;
+
+    const elements = document.querySelectorAll("[data-reply-index]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = parseInt(entry.target.getAttribute("data-reply-index"), 10);
+            setCurrentIndex(idx);
+          }
+        });
+      },
+      {  threshold: 0.5}
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [data?.posts]);
+
+  const handleTimelineMove = (e) => {
+    if (!isDragging || !data?.posts?.length) return;
+    const rect = timelineRef.current.getBoundingClientRect();
+    const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+    const y = clientY - rect.top;
+    const percentage = y / rect.height;
+    const targetIndex = Math.max(
+      0,
+      Math.min(data.posts.length - 1, Math.round(percentage * (data.posts.length - 1)))
+    );
+
+    setCurrentIndex(targetIndex);
+
+    scroller.scrollTo(`reply-${targetIndex}`, {
+      duration: 0,
+      smooth: false,
+      offset: -100,
+    });
+
+  };
 
   if (isLoading) return <div>Loading...</div>;
-
-  const thread = data.thread;
-  
-  const handleLike = async () => {
-    if (!user) return;
-    try {
-      setLiked(!liked);
-      if (liked) {
-        await unlikeThread(thread._id);
-        setLikeCount(prev => prev - 1)
-      }
-      if (!liked) {
-        await likeThread(thread._id);
-        setLikeCount(prev => prev + 1)
-      }
-      if (disliked) {
-        await undislikeThread(thread._id)
-        setDisliked(false);
-        setDislikeCount(prev => prev - 1)
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleDislike = async () => {
-    if (!user) return;
-
-    try {
-      setDisliked(!disliked);
-      if (disliked) {
-        await undislikeThread(thread._id);
-        setDislikeCount(prev => prev - 1)
-      }
-      if (!disliked) {
-        await dislikeThread(thread._id);
-        setDislikeCount(prev => prev + 1)
-      }
-
-      if (liked){ 
-        await unlikeThread(thread._id)
-        setLiked(false);
-        setLikeCount(prev => prev - 1)
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  if (!thread) return <div>Thread not found</div>;
 
   return (
-
     <div className="p-8 mx-20 grid grid-cols-6 gap-6">
-
       {/* Side menu */}
       <div className="col-span-1">
         <ForumSideMenu categories={categories} tags={tags} />
       </div>
 
-      {/* thread Card */}
+      {/* Main thread content */}
       <div className="col-span-4">
-        <div className="">
+        <div>
           <div className="flex gap-2">
             {thread.tags.map((g) => (
               <Link
@@ -133,12 +127,12 @@ const ForumThread = () => {
               </Link>
             ))}
           </div>
+
           <div className="flex justify-between my-4">
             <div>
               <h2 className="text-xl font-semibold text-gray-800">{thread.title}</h2>
               <Link
                 to={`/forum/?category=${thread.category}`}
-                key={thread.category}
                 className="text-sm font-medium py-1 rounded-full text-rat_base hover:text-rat_darkest"
               >
                 {thread.category}
@@ -150,40 +144,19 @@ const ForumThread = () => {
               </div>
             </div>
           </div>
+
           <p className="text-gray-700 mt-2 leading-relaxed">{thread.text}</p>
 
-          <div className="flex justify-between text-gray-500 items-center text-sm mt-4">
-            <div className="flex gap-4 text-gray-500 items-center text-sm">
-              {user ? (
-                <button
-                  onClick={handleLike}
-                  className={`flex items-center gap-1 transition ${liked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
-                >
-                  <ThumbsUp className="w-4" />
-                  <span>{likeCount}</span>
-                </button>
-              ) : (
-                <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
-                  <ThumbsUp className="w-4" />
-                  <span>{likeCount}</span>
-                </div>
-              )}
-              {user ? (
-                <button
-                  onClick={handleDislike}
-                  className={`flex items-center gap-1 transition ${disliked ? "fill-rat_base" : "fill-rat_lightest hover:fill-rat_base"}`}
-                >
-                  <ThumbsDown className="w-4" />
-                  <span>{dislikeCount}</span>
-                </button>
-              )
-                : (
-                  <div className="flex items-center gap-1 text-rat_base fill-rat_lightest cursor-not-allowed">
-                    <ThumbsDown className="w-4" />
-                    <span>{dislikeCount}</span>
-                  </div>
-                )}
-            </div>
+          <div className="flex justify-between items-center text-sm mt-4">
+            <LikeDislikeButtons
+              liked={liked}
+              disliked={disliked}
+              likeCount={likeCount}
+              dislikeCount={dislikeCount}
+              handleLike={handleLike}
+              handleDislike={handleDislike}
+              isDisabled={!user}
+            />
 
             <button
               onClick={() => setModalOpen(true)}
@@ -191,41 +164,119 @@ const ForumThread = () => {
             >
               Reply
             </button>
-
-            <PostModal
-              isOpen={modalOpen}
-              onClose={() => setModalOpen(false)}
-              threadId={thread}
-            />
           </div>
+
+          <PostModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            threadId={thread}
+          />
         </div>
 
-        {/* Divider */}
-        <div className="flex items-center my-2">
-          <hr className="flex-grow h-0.5 border-t-0 bg-rat_lightest" />
-        </div>
+        <hr className="my-4 border-t border-rat_lightest" />
 
         {/* Replies */}
-        <div className="flex flex-col gap-6 ">
-
-          {data.posts && data.posts.length === 0 ? (
-            <p className="text-gray-500 italic text-center">The void.</p>
-          ) : (
-            data.posts.slice()
+        <div className="flex flex-col gap-6">
+          {data.posts && data.posts.length > 0 ? (
+            data.posts
+              .slice()
               .sort((a, b) => new Date(a.created) - new Date(b.created))
-              .map((post) => (
-                <div key={post.id} className="rounded-xl border p-4">
-                  <ForumPost post={post} />
-                </div>
+              .map((post, index) => (
+                <Element key={post.id} name={`reply-${index}`}>
+                  <div
+                    id={`reply-${index}`}
+                    data-reply-index={index}
+                    className="rounded-xl border p-4"
+                  >
+                    <ForumPost post={post} />
+                  </div>
+                </Element>
               ))
+          ) : (
+            <p className="text-gray-500 italic text-center">The void.</p>
           )}
         </div>
       </div>
 
       {/* Timeline */}
-      <div className="col-span-1">
-        <p>A timeline i promise</p>
+      <div
+        className="fixed top-1/2 right-44 -translate-y-1/2 h-[350px] flex justify-center items-center cursor-pointer select-none z-50"
+        ref={timelineRef}
+        onMouseDown={(e) => {
+          setIsDragging(true);
+          handleTimelineMove(e);
+        }}
+        onMouseMove={handleTimelineMove}
+        onMouseUp={() => setIsDragging(false)}
+        onMouseLeave={() => setIsDragging(false)}
+        onTouchStart={(e) => {
+          setIsDragging(true);
+          handleTimelineMove(e);
+        }}
+        onTouchMove={handleTimelineMove}
+        onTouchEnd={() => setIsDragging(false)}
+
+        onClick={(e) => {
+          if (!data?.posts?.length) return;
+          const rect = timelineRef.current.getBoundingClientRect();
+          const y = e.clientY - rect.top;
+          const percentage = y / rect.height;
+          const targetIndex = Math.max(
+            0,
+            Math.min(data.posts.length - 1, Math.round(percentage * (data.posts.length - 1)))
+          );
+
+          setCurrentIndex(targetIndex);
+
+          scroller.scrollTo(`reply-${targetIndex}`, {
+            duration: 300,
+            smooth: true,
+            offset: -100,
+          });
+        }}
+      >
+
+        <div className="relative w-4 h-full">
+          <div className="absolute left-1/2 -translate-x-1/2 w-1 h-full bg-rat_lightest rounded-full" />
+
+          {data.posts?.length > 1 && (
+            <>
+              <div
+                className="absolute left-1/2 -translate-x-1/2 top-0 w-1 bg-rat_base rounded-full transition-all duration-200"
+                style={{
+                  height: `${(currentIndex / (data.posts.length - 1)) * 100}%`,
+                }}
+              />
+
+              {/*bubble */}
+              <div
+                className="absolute left-6 -translate-y-1/2 text-xs text-white transition-all duration-200 ease-in-out"
+                style={{
+                  top: `${(currentIndex / (data.posts.length - 1)) * 100}%`,
+                }}
+              >
+                <div className="bg-rat_base px-4 py-3 rounded-lg shadow-xl text-white w-32 text-left leading-snug">
+                  <div className="font-bold text-sm">
+                    {currentIndex + 1} / {data.posts.length}
+                  </div>
+                  <div className="text-xs text-gray-300">
+                    {formatDate(data.posts[currentIndex]?.created)}
+                  </div>
+                </div>
+              </div>
+
+              {/*circle */}
+              <div
+                className="absolute left-[0.3px] w-4 h-4 rounded-full bg-rat_dark border border-white transition-all duration-200"
+                style={{
+                  top: `calc(${(currentIndex / (data.posts.length - 1)) * 100}% - 8px)`,
+                }}
+              />
+            </>
+          )}
+        </div>
       </div>
+
     </div>
   );
 };

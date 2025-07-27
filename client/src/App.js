@@ -1,7 +1,6 @@
 import Home from "./components/Home";
 import Profile from "./components/users/Profile";
 import Header from "./components/Header";
-import UserProfile from "./components/users/UserProfile";
 import UserList from "./components/users/UserList";
 import UserListFollowers from "./components/users/UserListFollowers";
 import UserListFollowing from "./components/users/UserListFollowing";

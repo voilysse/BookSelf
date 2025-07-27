@@ -1,44 +1,11 @@
 import { Link } from "react-router-dom";
 import { useGetPostsForThreadQuery } from "../../features/forumApi";
 import { useEffect, useState } from "react";
+import useFormattedDate from "../utils/useFormattedDate";
 
 const ForumCard = ({ thread }) => {
   const { data, isLoading } = useGetPostsForThreadQuery(thread._id);
-
-  const [now, setNow] = useState(new Date());
-  const [time, setTime] = useState("Loading...");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(new Date());
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (!data || !data.posts?.length) return;
-
-    const posted = new Date(data.posts[0].created);
-    const secondsAgo = Math.floor((now - posted) / 1000);
-
-    const intervals = [
-      { label: "year", seconds: 31536000 },
-      { label: "month", seconds: 2592000 },
-      { label: "day", seconds: 86400 },
-      { label: "hour", seconds: 3600 },
-      { label: "minute", seconds: 60 },
-      { label: "second", seconds: 1 },
-    ];
-
-    for (const i of intervals) {
-      const count = Math.floor(secondsAgo / i.seconds);
-      if (count >= 1) {
-        setTime(`${count} ${i.label}${count > 1 ? "s" : ""} ago`);
-        return;
-      }
-    }
-    setTime("just now");
-  }, [now, data]);
+  const timeDisplay = useFormattedDate(thread.created);
 
   if (isLoading || !data) return <div>Loading...</div>;
 
@@ -71,8 +38,6 @@ const ForumCard = ({ thread }) => {
               </>
             )}
           </div>
-
-
         </div>
 
         <div className="flex items-center capitalize gap-6 justify-end text-sm text-rat_base">
@@ -89,7 +54,7 @@ const ForumCard = ({ thread }) => {
             <span>{replyCount}</span>
           </div>
           <div className="w-16 flex justify-center items-center text-center">
-            <span>{latestPost ? time : "No activity"}</span>
+            <span>{latestPost ? timeDisplay : "No activity"}</span>
           </div>
         </div>
 

@@ -1,5 +1,3 @@
-import ForumList from "./forum/ForumList"
-
 function Main() {
   return (
     <main
